@@ -210,7 +210,10 @@
     border-radius: 4px;
     transform: rotate(2.5deg);
     box-shadow: 0 24px 48px -18px rgba(31,42,36,0.35), 0 2px 0 rgba(31,42,36,0.06);
+    transition: box-shadow 240ms cubic-bezier(.2,.8,.2,1);
+    will-change: box-shadow;
     position: relative;
+    z-index: 0;
   }
   .ticket::before{
     content:"";
@@ -301,7 +304,24 @@
     background: var(--kunyit);
     border-radius: 4px;
     transform: rotate(-4deg);
-    z-index:-1;
+    z-index: 3;
+    box-shadow: 0 20px 40px rgba(31,42,36,0.18), 0 8px 18px rgba(31,42,36,0.12), 0 2px 6px rgba(31,42,36,0.08);
+    transition: box-shadow 240ms cubic-bezier(.2,.8,.2,1);
+    will-change: box-shadow;
+    background-image: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.02)), radial-gradient(circle at 20% 10%, rgba(255,255,255,0.03) 0, rgba(255,255,255,0) 30%);
+    background-blend-mode: overlay, overlay;
+    background-size: cover, 400px 400px;
+  }
+
+  .ticket-behind::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -6px 18px rgba(31,42,36,0.04);
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 8px);
+    mix-blend-mode: overlay;
   }
 
   /* ---------- SECTION SHARED ---------- */
