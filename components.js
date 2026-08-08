@@ -6,7 +6,8 @@
 const NAV_LINKS = [
   { label: 'Beranda', href: 'index.html' },
   { label: 'About Us', href: 'about.html' },
-  { label: 'Jasa', href: 'jasa.html' }
+  { label: 'Jasa', href: 'jasa.html' },
+  { label: 'Kontak', href: 'kontak.html' }
 ];
 
 function renderHeader(){
@@ -55,7 +56,7 @@ function renderFooter(){
   footer.innerHTML =
     '<div class="wrap footer-inner">' +
       '<a href="index.html" class="logo" style="text-decoration:none;"><span class="dot"></span>JOBnesia</a>' +
-      '<p>Proyek ini diharapkan mampu membantu mempermudah para UMKM untuk mencari freelancer yang mereka butuhkan</p>' +
+      '<p>Dibuat untuk GEMASTIK XIX 2026 — Kompetisi Pengembangan Perangkat Lunak</p>' +
     '</div>';
 }
 

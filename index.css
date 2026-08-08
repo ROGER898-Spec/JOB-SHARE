@@ -530,25 +530,6 @@
   }
 
 /* ---------- ABOUT PAGE ---------- */
-.team-avatar {
-  width: 144px !important;
-  height: 144px !important;
-  border-radius: 50% !important;
-  margin: 0 auto 30px !important;
-  
-  /* Properti Flexbox wajib agar teks tepat di tengah */
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  
-  /* Mengatur ukuran huruf di dalamnya */
-  font-size: 3.5rem !important; 
-  font-weight: bold !important;
-  color: #ffffff !important;
-  
-  /* Tambahan jika nanti diubah menjadi gambar asli */
-  object-fit: cover;
-}
 .page-hero{
   padding: 64px 0 20px;
   text-align: center;
@@ -683,4 +664,61 @@
 }
 @media (max-width: 640px){
   .value-grid{ grid-template-columns: 1fr; }
+}
+
+/* ---------- KONTAK PAGE ---------- */
+.contact-grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.contact-card{
+  text-align:center;
+  padding: 36px 26px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.contact-card:hover{ border-color: var(--teal); transform: translateY(-2px); }
+.contact-icon{
+  width: 52px; height:52px;
+  border-radius: 50%;
+  margin: 0 auto 18px;
+  display:flex; align-items:center; justify-content:center;
+}
+.contact-icon svg{ width:24px; height:24px; }
+.contact-card .tag{
+  font-family:'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+.contact-card h3{
+  margin-top: 8px;
+  font-size: 1.1rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+}
+.contact-card p{
+  margin-top: 8px;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+.contact-card .number{
+  margin-top: 16px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size: 1.02rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.contact-card .btn{
+  margin-top: 18px;
+  width: 100%;
+  justify-content:center;
+}
+
+@media (max-width: 900px){
+  .contact-grid{ grid-template-columns: 1fr; }
 }
