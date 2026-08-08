@@ -530,6 +530,25 @@
   }
 
 /* ---------- ABOUT PAGE ---------- */
+.team-avatar {
+  width: 144px !important;
+  height: 144px !important;
+  border-radius: 50% !important;
+  margin: 0 auto 30px !important;
+  
+  /* Properti Flexbox wajib agar teks tepat di tengah */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  
+  /* Mengatur ukuran huruf di dalamnya */
+  font-size: 3.5rem !important; 
+  font-weight: bold !important;
+  color: #ffffff !important;
+  
+  /* Tambahan jika nanti diubah menjadi gambar asli */
+  object-fit: cover;
+}
 .page-hero{
   padding: 64px 0 20px;
   text-align: center;
