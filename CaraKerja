@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cara Kerja — JOBnesia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<header id="site-header"></header>
+
+<main>
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow">Cara Kerja</span>
+      <h1>Cuma <span class="accent">empat langkah</span>, dari butuh tenaga kerja sampai kelar dibayar.</h1>
+      <p class="lead">Nggak perlu proses rekrutmen berhari-hari. Ini alur lengkap JOBnesia mempertemukan UMKM dengan freelancer terdekat — dari kebutuhan diposting sampai pembayaran cair dan rating diberikan.</p>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section>
+    <div class="wrap">
+      <div class="process-track">
+
+        <!-- STEP 01 -->
+        <div class="process-block reveal">
+          <div class="process-marker"><span class="process-no mono">01</span></div>
+          <div class="process-visual">
+            <div class="mini-ticket" aria-hidden="true">
+              <div class="mt-head">
+                <span class="mt-brand">JOBnesia</span>
+                <span class="mt-blink"></span>
+              </div>
+              <div class="mt-row r1"><span>Kebutuhan</span><b>Fotografer produk</b></div>
+              <div class="mt-row r2"><span>Durasi</span><b>2 hari</b></div>
+              <div class="mt-row r3"><span>Lokasi</span><b>Kemang, Jaksel</b></div>
+              <div class="mt-wa">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H8l-4 4V4z"/></svg>
+                Terkirim via WhatsApp
+              </div>
+            </div>
+          </div>
+          <div class="process-content">
+            <h3>Posting kebutuhan</h3>
+            <p class="process-lead">Semua dimulai dari kebutuhan yang jelas. Cukup isi form singkat — jenis kerjaan, kapan dibutuhkan, berapa lama, dan lokasi — atau kirim langsung lewat chat WhatsApp kalau lagi buru-buru.</p>
+            <ul class="process-detail-list">
+              <li>Cukup 4 info utama: jenis kebutuhan, tanggal &amp; jam, estimasi durasi, dan lokasi kerja.</li>
+              <li>Bisa posting lewat website atau langsung chat WhatsApp — nggak wajib install apa-apa.</li>
+              <li>Tambahkan budget perkiraan supaya freelancer yang match makin relevan.</li>
+              <li>Setiap posting otomatis dapat nomor nota supaya gampang dilacak statusnya.</li>
+            </ul>
+            <div class="process-tip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>
+              <span>Makin detail brief yang ditulis, makin cepat dan akurat freelancer yang match nantinya.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 02 -->
+        <div class="process-block reveal">
+          <div class="process-marker"><span class="process-no mono">02</span></div>
+          <div class="process-visual">
+            <div class="radar" aria-hidden="true">
+              <div class="radar-ring ring1"></div>
+              <div class="radar-ring ring2"></div>
+              <div class="radar-ring ring3"></div>
+              <div class="radar-center"></div>
+              <div class="radar-dot d1"></div>
+              <div class="radar-dot d2"></div>
+              <div class="radar-dot d3"></div>
+              <div class="radar-dot d4"></div>
+            </div>
+          </div>
+          <div class="process-content">
+            <h3>Match otomatis</h3>
+            <p class="process-lead">Begitu kebutuhan terkirim, sistem JOBnesia langsung bekerja di belakang layar — mencocokkan skill yang dicari dengan freelancer paling relevan dan paling dekat.</p>
+            <ul class="process-detail-list">
+              <li>Sistem menyaring freelancer berdasarkan kategori skill yang sesuai kebutuhan.</li>
+              <li>Radius dipersempit ke freelancer terdekat dulu (hyperlocal) supaya waktu tempuh minimal.</li>
+              <li>Hanya freelancer berstatus "available" saat itu yang dikirimi notifikasi.</li>
+              <li>Notifikasi masuk real-time ke semua freelancer yang cocok sekaligus.</li>
+            </ul>
+            <div class="process-tip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>
+              <span>Rata-rata kebutuhan mendapat respons pertama hanya dalam hitungan menit setelah diposting.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 03 -->
+        <div class="process-block reveal">
+          <div class="process-marker"><span class="process-no mono">03</span></div>
+          <div class="process-visual">
+            <div class="route" aria-hidden="true">
+              <div class="route-track">
+                <div class="route-mover">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="7" r="3"/><path d="M5 21c0-4 3-7 7-7s7 3 7 7"/></svg>
+                </div>
+                <svg class="route-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              </div>
+              <div class="route-label">Menuju lokasi sesuai jadwal</div>
+            </div>
+          </div>
+          <div class="process-content">
+            <h3>Pekerja datang</h3>
+            <p class="process-lead">Freelancer yang tertarik konfirmasi lewat aplikasi, lalu langsung menuju lokasi sesuai jadwal yang sudah disepakati bersama.</p>
+            <ul class="process-detail-list">
+              <li>UMKM bisa lihat profil, rating, dan histori kerja freelancer sebelum konfirmasi final.</li>
+              <li>Chat singkat tersedia untuk menyamakan detail teknis sebelum freelancer berangkat.</li>
+              <li>Status "menuju lokasi" bisa dipantau supaya UMKM tahu perkiraan waktu tiba.</li>
+              <li>Kalau freelancer tiba-tiba membatalkan, sistem otomatis cari pengganti terdekat lain.</li>
+            </ul>
+            <div class="process-tip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>
+              <span>Konfirmasi kehadiran freelancer tercatat otomatis, jadi ada histori yang jelas untuk ke depannya.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 04 -->
+        <div class="process-block reveal">
+          <div class="process-marker"><span class="process-no mono">04</span></div>
+          <div class="process-visual">
+            <div class="payout" aria-hidden="true">
+              <div class="payout-check">
+                <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <div class="payout-rate">
+                <div class="payout-avatar umkm">
+                  <div class="av">U</div>
+                  <div class="payout-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+                </div>
+                <div class="payout-avatar freelancer">
+                  <div class="av">F</div>
+                  <div class="payout-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="process-content">
+            <h3>Selesai &amp; bayar</h3>
+            <p class="process-lead">Setelah kerjaan kelar, UMKM tinggal konfirmasi selesai — dana yang sudah ditahan di micro-escrow langsung cair ke freelancer, dan kedua pihak saling kasih rating.</p>
+            <ul class="process-detail-list">
+              <li>Dana UMKM ditahan platform sejak awal (escrow), jadi freelancer nggak perlu takut nggak dibayar.</li>
+              <li>Setelah UMKM konfirmasi selesai, pencairan ke freelancer diproses cepat dengan biaya platform ringan.</li>
+              <li>Rating dua arah: freelancer menilai kejelasan brief &amp; ketepatan bayar UMKM, UMKM menilai kualitas &amp; ketepatan waktu freelancer.</li>
+              <li>Histori dan rating ini yang bikin match berikutnya makin akurat dan saling percaya.</li>
+            </ul>
+            <div class="process-tip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>
+              <span>Rating dua arah ini yang bikin UMKM dan freelancer sama-sama merasa aman pakai JOBnesia berulang kali.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">FAQ</span>
+        <h2>Yang sering ditanyakan soal cara kerja JOBnesia</h2>
+        <p>Pertanyaan teknis umum seputar proses posting, matching, sampai pembayaran.</p>
+      </div>
+      <div class="faq-list">
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false" aria-controls="faq-a1">
+            <span>Apakah JOBnesia gratis digunakan?</span>
+            <span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="faq-answer" id="faq-a1" aria-hidden="true"><div class="faq-answer-inner"><p>Ya. Mendaftar dan memposting kebutuhan di JOBnesia gratis, baik untuk UMKM maupun freelancer. Platform hanya mengambil biaya kecil dari transaksi yang berhasil lewat micro-escrow, bukan biaya pendaftaran atau posting.</p></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false" aria-controls="faq-a2">
+            <span>Bagaimana cara kerja sistem micro-escrow?</span>
+            <span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="faq-answer" id="faq-a2" aria-hidden="true"><div class="faq-answer-inner"><p>Dana dari UMKM ditahan sementara oleh platform sejak kebutuhan disepakati. Begitu UMKM mengonfirmasi pekerjaan selesai, dana langsung cair ke freelancer. Sistem ini melindungi kedua pihak — freelancer pasti dibayar, UMKM nggak perlu transfer manual di awal.</p></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false" aria-controls="faq-a3">
+            <span>Bagaimana JOBnesia mencocokkan freelancer dengan kebutuhan saya?</span>
+            <span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="faq-answer" id="faq-a3" aria-hidden="true"><div class="faq-answer-inner"><p>Sistem mencocokkan berdasarkan tiga hal: kategori skill yang sesuai kebutuhan, jarak freelancer dari lokasi kerja (radius terdekat diprioritaskan), dan status ketersediaan freelancer saat itu juga.</p></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false" aria-controls="faq-a4">
+            <span>Apa yang terjadi kalau freelancer tiba-tiba membatalkan?</span>
+            <span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="faq-answer" id="faq-a4" aria-hidden="true"><div class="faq-answer-inner"><p>Sistem otomatis mencari freelancer pengganti terdekat lainnya yang available, jadi UMKM nggak perlu posting ulang dari awal. Pembatalan mendadak juga tercatat dan memengaruhi trust score freelancer yang bersangkutan.</p></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false" aria-controls="faq-a5">
+            <span>Perlu install aplikasi untuk mulai pakai JOBnesia?</span>
+            <span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="faq-answer" id="faq-a5" aria-hidden="true"><div class="faq-answer-inner"><p>Tidak. Untuk tahap awal, JOBnesia bisa diakses langsung lewat browser di desktop maupun HP, dan posting kebutuhan juga bisa lewat WhatsApp — nggak ada yang wajib diinstal.</p></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false" aria-controls="faq-a6">
+            <span>Bagaimana sistem rating dan trust score bekerja?</span>
+            <span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="faq-answer" id="faq-a6" aria-hidden="true"><div class="faq-answer-inner"><p>Rating berjalan dua arah. Setelah pekerjaan selesai, freelancer menilai kejelasan brief dan ketepatan bayar UMKM, sementara UMKM menilai kualitas kerja dan ketepatan waktu freelancer. Histori ini yang membentuk trust score masing-masing.</p></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false" aria-controls="faq-a7">
+            <span>Wilayah mana saja yang sudah bisa pakai JOBnesia?</span>
+            <span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="faq-answer" id="faq-a7" aria-hidden="true"><div class="faq-answer-inner"><p>Untuk tahap awal, JOBnesia baru melayani wilayah Jabodetabek. Wilayah lain akan menyusul setelah tahap awal ini berjalan stabil.</p></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false" aria-controls="faq-a8">
+            <span>Berapa lama biasanya freelancer merespons kebutuhan yang diposting?</span>
+            <span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="faq-answer" id="faq-a8" aria-hidden="true"><div class="faq-answer-inner"><p>Karena notifikasi dikirim real-time ke freelancer terdekat yang available, respons pertama biasanya masuk hanya dalam hitungan menit setelah kebutuhan diposting.</p></div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="components.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
