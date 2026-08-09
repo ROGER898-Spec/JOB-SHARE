@@ -976,6 +976,24 @@
 
 /* visual 3 — pekerja menuju lokasi */
 .route{ width: 230px; position: relative; padding-top: 26px; }
+.process-visual{ position: relative; }
+.process-visual .map-bg{
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  overflow: hidden;
+}
+.process-visual .map-img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  border: 0;
+  pointer-events: none;
+  filter: saturate(0.6) contrast(0.98) brightness(0.98) hue-rotate(-5deg);
+  opacity: 0.95;
+}
+.process-visual .radar{ position: relative; z-index: 2; }
 .route-track{
   position: relative;
   height: 2px;
