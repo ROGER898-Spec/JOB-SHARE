@@ -199,18 +199,31 @@
   /* --- signature: the "nota SOS" receipt ticket --- */
   .ticket-stage{
     position:relative;
-    display:flex;
-    justify-content:center;
+    display:grid;
+    justify-items:center;
+    perspective: 900px;
   }
+  .ticket-behind,
   .ticket{
-    background: var(--paper-raised);
+    grid-area: 1 / 1;
     width: 100%;
     max-width: 340px;
+  }
+  .ticket{
+    background-color: var(--kunyit);
+    background-image:
+      repeating-linear-gradient(115deg, rgba(31,42,36,0.035) 0px, rgba(31,42,36,0.035) 1px, transparent 1px, transparent 3px),
+      repeating-linear-gradient(25deg, rgba(31,42,36,0.03) 0px, rgba(31,42,36,0.03) 1px, transparent 1px, transparent 4px);
     padding: 26px 24px 30px;
     border-radius: 4px;
-    transform: rotate(2.5deg);
+    transform: rotate(var(--tilt, 2.5deg));
+    transform-origin: top center;
     box-shadow: 0 24px 48px -18px rgba(31,42,36,0.35), 0 2px 0 rgba(31,42,36,0.06);
     position: relative;
+    z-index: 2;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+    backface-visibility: hidden;
+    will-change: transform;
   }
   .ticket::before{
     content:"";
@@ -228,6 +241,8 @@
     border-bottom: 1.5px dashed var(--line);
     padding-bottom: 14px;
     margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
   }
   .ticket-head .brand{
     font-family:'Plus Jakarta Sans', sans-serif;
@@ -247,12 +262,16 @@
     text-transform: uppercase;
     color: var(--ink-soft);
     margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
   }
   .ticket-row{
     display:flex;
     justify-content:space-between;
     font-size: 0.88rem;
     padding: 6px 0;
+    position: relative;
+    z-index: 1;
   }
   .ticket-row .k{ color: var(--ink-soft); }
   .ticket-row .v{ font-weight: 600; text-align:right; }
@@ -260,12 +279,16 @@
     border: none;
     border-top: 1.5px dashed var(--line);
     margin: 14px 0;
+    position: relative;
+    z-index: 1;
   }
   .ticket-status{
     background: rgba(14,110,92,0.08);
     border: 1px solid rgba(14,110,92,0.25);
     border-radius: 8px;
     padding: 12px 14px;
+    position: relative;
+    z-index: 1;
   }
   .ticket-status .label{
     font-family:'IBM Plex Mono', monospace;
@@ -296,12 +319,28 @@
     margin-top: 8px;
   }
   .ticket-behind{
-    position:absolute;
-    inset: 14px -14px -14px 14px;
-    background: var(--kunyit);
+    align-self: stretch;
+    background-color: var(--paper-raised);
+    background-image:
+      repeating-linear-gradient(115deg, rgba(31,42,36,0.02) 0px, rgba(31,42,36,0.02) 1px, transparent 1px, transparent 3px);
     border-radius: 4px;
-    transform: rotate(-4deg);
-    z-index:-1;
+    transform: rotate(var(--tilt-behind, -4deg));
+    box-shadow: 0 14px 30px -18px rgba(31,42,36,0.25);
+    position: relative;
+    z-index: 1;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+    backface-visibility: hidden;
+    will-change: transform;
+  }
+
+  /* hover: lift the bottom of the ticket toward the viewer, like picking up a paper's edge */
+  .ticket-stage:hover .ticket{
+    transform: rotate(var(--tilt, 2.5deg)) translateY(-6px) rotateX(9deg);
+    box-shadow: 0 34px 60px -16px rgba(31,42,36,0.42), 0 2px 0 rgba(31,42,36,0.06);
+  }
+  .ticket-stage:hover .ticket-behind{
+    transform: rotate(var(--tilt-behind, -4deg)) translateY(-3px) rotateX(6deg);
+    box-shadow: 0 20px 38px -18px rgba(31,42,36,0.3);
   }
 
   /* ---------- SECTION SHARED ---------- */
