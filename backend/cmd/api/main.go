@@ -1,6 +1,6 @@
 // @title Jobshare Backend API
 // @version 1.0
-// @description This is the official API documentation for the Jobshare platform (Phase 1: Auth & Profile).
+// @description This is the official API documentation for the Jobshare platform (Auth, UMKM Profiles, and Job Vacancies).
 // @termsOfService http://swagger.io/terms/
 
 // @host localhost:8080
@@ -43,7 +43,11 @@ func main() {
 		AppName: "Jobshare API v1.0",
 	})
 
-	httpDelivery.RegisterRoutes(app, authHandler)
+	jobRepo := postgres.NewJobRepository(db)
+	jobUsecase := usecase.NewJobUsecase(jobRepo, 5*time.Second)
+	jobHandler := handler.NewJobHandler(jobUsecase)
+
+	httpDelivery.RegisterRoutes(app, authHandler, jobHandler)
 
 	log.Fatal(app.Listen(":8080"))
 }

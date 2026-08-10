@@ -25,12 +25,13 @@ backend/
 │   └── api/                  # Main application entrypoint
 ├── internal/
 │   ├── domain/               # Core entities and repository interfaces
-│   ├── repository/           # Database implementations & raw SQL queries
+│   ├── repository/           # Database implementations & raw SQL queries (external .sql)
 │   ├── usecase/              # Business logic layer
 │   └── delivery/             # HTTP handlers, DTOs, and routing
 ├── pkg/                      # Shared helper packages (response, pagination, etc.)
 ├── infrastructure/           # Database migrations and configurations
 └── docs/                     # Auto-generated Swagger documentation
+
 ```
 
 ---
@@ -51,61 +52,62 @@ Make sure you have the following installed on your machine:
 
 ```bash
 git clone https://github.com/ROGER898-Spec/JOB-SHARE.git
-cd JOB-SHARE/backend
+cd ./backend
+
 ```
 
 ### 2. Run PostgreSQL via Docker
 
-Ensure you have a PostgreSQL container running. Adjust the credentials based on your setup if necessary.
-
 ```bash
-docker run --name jobshare-postgres \
-  -e POSTGRES_USER=root \
-  -e POSTGRES_PASSWORD=password \
-  -e POSTGRES_DB=jobshare \
-  -p 5432:5432 \
-  -d postgres:alpine
+docker run --name jobshare-postgres -e POSTGRES_USER=root -e POSTGRES_PASSWORD=password -e POSTGRES_DB=jobshare -p 5432:5432 -d postgres:alpine
+
 ```
 
 ### 3. Run Database Migrations
 
-Apply the initial database schema using `golang-migrate`:
-
 ```bash
-migrate \
-  -path ./infrastructure/migrations \
-  -database "postgres://root:password@localhost:5432/jobshare?sslmode=disable" \
-  up
+migrate -path ./infrastructure/migrations -database "postgres://root:password@localhost:5432/jobshare?sslmode=disable" up
+
 ```
 
 ### 4. Run the Application
 
-Start the Go Fiber server:
-
 ```bash
 go run cmd/api/main.go
+
 ```
 
-The server will run on:
-
-**http://localhost:8080**
+The server will run on: **http://localhost:8080**
 
 ---
 
 ## 📖 API Documentation (Swagger)
 
 Interactive API documentation is automatically generated and hosted locally.
-
 Once the server is running, open your browser and navigate to:
-
-**http://localhost:8080/swagger/index.html**
+👉 **http://localhost:8080/swagger/index.html**
 
 ---
 
-## 📌 Phase 1 Features (Auth & Core)
+## 📌 API Endpoints Reference
+
+### 🔐 Auth (Phase 1)
 
 | Method | Endpoint                | Description                                               |
 | ------ | ----------------------- | --------------------------------------------------------- |
 | `POST` | `/api/v1/auth/register` | Register a new account (`admin`, `umkm`, or `freelancer`) |
 | `POST` | `/api/v1/auth/login`    | Authenticate user and obtain session/profile data         |
-| `GET`  | `/health`               | Server health check endpoint                              |
+
+### 💼 Jobs / Vacancies (Phase 2)
+
+| Method | Endpoint           | Description                                    |
+| ------ | ------------------ | ---------------------------------------------- |
+| `POST` | `/api/v1/jobs`     | Create a new job vacancy (UMKM)                |
+| `GET`  | `/api/v1/jobs`     | Retrieve a list of all available job vacancies |
+| `GET`  | `/api/v1/jobs/:id` | Retrieve job vacancy details by ID             |
+
+### 🛠️ System
+
+| Method | Endpoint  | Description                  |
+| ------ | --------- | ---------------------------- |
+| `GET`  | `/health` | Server health check endpoint |
