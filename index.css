@@ -1133,3 +1133,165 @@
   .faq-question{ padding: 14px 16px; font-size: 0.9rem; }
   .faq-answer p{ padding: 0 16px 16px; }
 }
+/* ---------- AUTH (LOGIN / REGISTER) ---------- */
+.auth-section{
+  padding: 64px 0 90px;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+}
+.auth-section .wrap{
+  display: flex;
+  justify-content: center;
+}
+.auth-card{
+  width: 100%;
+  max-width: 460px;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 40px 36px;
+  box-shadow: 0 3px 0 var(--line);
+}
+.auth-head{ margin-bottom: 28px; }
+.auth-head .eyebrow{
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 10px;
+}
+.auth-head h1{
+  font-size: 1.7rem;
+  margin-bottom: 8px;
+}
+.auth-head p{
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+/* Role selector (register.html) */
+.role-select{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.role-option{
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 14px;
+  cursor: pointer;
+  text-align: center;
+  background: var(--paper);
+  transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+}
+.role-option:hover{ transform: translateY(-1px); border-color: var(--teal); }
+.role-option.active{
+  border-color: var(--teal);
+  background: rgba(14,110,92,0.08);
+  box-shadow: 0 2px 0 var(--teal);
+}
+.role-option .role-icon{
+  width: 36px; height: 36px;
+  margin: 0 auto 10px;
+  color: var(--teal);
+}
+.role-option.active .role-icon{ color: var(--teal-deep); }
+.role-option h4{
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+.role-option p{
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+/* Form fields */
+.form-group{ margin-bottom: 18px; }
+.form-group label{
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+.form-group input,
+.form-group select{
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  transition: border-color 0.15s ease;
+}
+.form-group input:focus,
+.form-group select:focus{
+  outline: none;
+  border-color: var(--teal);
+}
+.form-hint{
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin-top: 5px;
+}
+
+/* Field set khusus role (disembunyikan sampai role dipilih) */
+.field-set{
+  display: none;
+}
+.field-set.active{
+  display: block;
+}
+
+/* Error & success message */
+.form-error{
+  display: none;
+  background: rgba(225,68,42,0.1);
+  color: var(--chili);
+  border: 1px solid rgba(225,68,42,0.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+.auth-msg{
+  font-size: 0.85rem;
+  margin-top: 12px;
+  min-height: 20px;
+}
+.auth-msg.success{ color: var(--teal); font-weight: 600; }
+.auth-msg.error{ color: var(--chili); font-weight: 600; }
+
+.auth-submit{
+  width: 100%;
+  justify-content: center;
+  padding: 13px 20px;
+  font-size: 0.95rem;
+}
+
+.auth-switch{
+  text-align: center;
+  margin-top: 22px;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+.auth-switch a{
+  color: var(--teal);
+  font-weight: 600;
+  text-decoration: none;
+}
+.auth-switch a:hover{ text-decoration: underline; }
+
+@media (max-width: 520px){
+  .auth-card{ padding: 32px 24px; }
+  .role-select{ grid-template-columns: 1fr; }
+}

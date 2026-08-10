@@ -5,10 +5,10 @@
 
 const NAV_LINKS = [
   { label: 'Beranda', href: 'index.html' },
-  { label: 'Cara Kerja', href: 'cara-kerja.html' },
-  { label: 'Jasa', href: 'jasa.html' },
   { label: 'About Us', href: 'about.html' },
-  { label: 'Kontak', href: 'kontak.html' }
+  { label: 'Jasa', href: 'jasa.html' },
+  { label: 'Kontak', href: 'kontak.html' },
+  { label: 'Cara Kerja', href: 'cara-kerja.html' },
 ];
 
 function renderHeader(){
@@ -26,8 +26,8 @@ function renderHeader(){
       '<a href="index.html" class="logo" style="text-decoration:none;"><span class="dot"></span>JOBnesia</a>' +
       '<ul class="nav-links">' + linksHtml + '</ul>' +
       '<div class="nav-cta">' +
-        '<a href="index.html#cta" class="btn btn-ghost btn-sm">Masuk</a>' +
-        '<a href="index.html#cta" class="btn btn-primary btn-sm"><span class="long">Gabung&nbsp;</span>Gratis</a>' +
+        '<a href="login.html" class="btn btn-ghost btn-sm">Masuk</a>' +
+        '<a href="register.html" class="btn btn-primary btn-sm"><span class="long">Gabung&nbsp;</span>Gratis</a>' +
       '</div>' +
       '<button class="menu-toggle" aria-label="Buka menu"><span></span><span></span><span></span></button>' +
     '</nav>';

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daftar — JOBnesia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<header id="site-header"></header>
+
+<main>
+  <section class="auth-section">
+    <div class="wrap">
+      <div class="auth-card">
+        <div class="auth-head">
+          <span class="eyebrow">Daftar Akun</span>
+          <h1>Gabung ke JOBnesia</h1>
+          <p>Pilih peranmu untuk mulai — sebagai pemilik UMKM atau sebagai freelancer.</p>
+        </div>
+
+        <div class="role-select" id="roleSelect">
+          <div class="role-option" data-role="umkm" id="roleUmkm">
+            <div class="role-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V9l7-4 7 4v12"/><path d="M9 21v-6h6v6"/></svg></div>
+            <h4>Pemilik UMKM</h4>
+            <p>Cari tenaga kerja lepas</p>
+          </div>
+          <div class="role-option" data-role="freelancer" id="roleFreelancer">
+            <div class="role-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+            <h4>Freelancer</h4>
+            <p>Cari kerja lepas terdekat</p>
+          </div>
+        </div>
+
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="nama">Nama Lengkap</label>
+            <input type="text" id="nama" required>
+          </div>
+
+          <!-- Field khusus UMKM -->
+          <div class="field-set" id="fieldsetUmkm">
+            <div class="form-group">
+              <label for="namaUsaha">Nama Usaha</label>
+              <input type="text" id="namaUsaha">
+            </div>
+          </div>
+
+          <!-- Field khusus Freelancer -->
+          <div class="field-set" id="fieldsetFreelancer">
+            <div class="form-group">
+              <label for="kategoriJasa">Kategori Jasa Utama</label>
+              <select id="kategoriJasa">
+                <option value="">Pilih kategori</option>
+                <option value="fotografer">Fotografer Produk</option>
+                <option value="videografer">Videografer</option>
+                <option value="admin-medsos">Admin Media Sosial</option>
+                <option value="event">Bantuan Event / Bazar</option>
+                <option value="stok">Stok Opname</option>
+                <option value="packing">Packing &amp; Gudang</option>
+                <option value="kasir">Kasir Pengganti</option>
+                <option value="desainer">Desainer Konten</option>
+                <option value="lainnya">Lainnya</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="lokasi">Lokasi (Jabodetabek)</label>
+            <input type="text" id="lokasi" placeholder="Contoh: Kemang, Jakarta Selatan" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Kata Sandi</label>
+            <input type="password" id="password" required minlength="6">
+            <div class="form-hint">Minimal 6 karakter</div>
+          </div>
+
+          <div class="form-error" id="formError">Lengkapi semua data dan pilih peranmu dulu, ya.</div>
+
+          <button type="submit" class="btn btn-primary auth-submit">Daftar Sekarang</button>
+          <div class="auth-msg" id="registerMsg"></div>
+        </form>
+
+        <div class="auth-switch">Sudah punya akun? <a href="login.html">Masuk di sini</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="components.js"></script>
+<script src="script.js"></script>
+<script>
+  // Pilih role — bisa lewat klik, atau otomatis lewat ?role=umkm / ?role=freelancer di URL
+  let selectedRole = null;
+  const roleUmkm = document.getElementById('roleUmkm');
+  const roleFreelancer = document.getElementById('roleFreelancer');
+  const fieldsetUmkm = document.getElementById('fieldsetUmkm');
+  const fieldsetFreelancer = document.getElementById('fieldsetFreelancer');
+
+  function setRole(role){
+    selectedRole = role;
+    roleUmkm.classList.toggle('active', role === 'umkm');
+    roleFreelancer.classList.toggle('active', role === 'freelancer');
+    fieldsetUmkm.classList.toggle('active', role === 'umkm');
+    fieldsetFreelancer.classList.toggle('active', role === 'freelancer');
+  }
+
+  roleUmkm.addEventListener('click', function(){ setRole('umkm'); });
+  roleFreelancer.addEventListener('click', function(){ setRole('freelancer'); });
+
+  // Baca query param ?role=... dari link yang datang dari halaman lain
+  const params = new URLSearchParams(window.location.search);
+  const preselect = params.get('role');
+  if(preselect === 'umkm' || preselect === 'freelancer'){
+    setRole(preselect);
+  }
+
+  // Submit — simulasi pakai localStorage (belum ada backend sungguhan)
+  const registerForm = document.getElementById('registerForm');
+  const formError = document.getElementById('formError');
+  const registerMsg = document.getElementById('registerMsg');
+
+  registerForm.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    if(!selectedRole){
+      formError.style.display = 'block';
+      return;
+    }
+    formError.style.display = 'none';
+
+    const user = {
+      nama: document.getElementById('nama').value,
+      role: selectedRole,
+      namaUsaha: selectedRole === 'umkm' ? document.getElementById('namaUsaha').value : null,
+      kategoriJasa: selectedRole === 'freelancer' ? document.getElementById('kategoriJasa').value : null,
+      lokasi: document.getElementById('lokasi').value,
+      email: document.getElementById('email').value,
+      password: document.getElementById('password').value // catatan: demo saja, jangan simpan password polos di sistem asli
+    };
+
+    // Simpan ke daftar user di localStorage (simulasi database)
+    const users = JSON.parse(localStorage.getItem('jobnesia_users') || '[]');
+    const alreadyExists = users.some(function(u){ return u.email === user.email; });
+    if(alreadyExists){
+      registerMsg.textContent = 'Email ini sudah terdaftar. Coba masuk lewat halaman Login.';
+      registerMsg.className = 'auth-msg error';
+      return;
+    }
+
+    users.push(user);
+    localStorage.setItem('jobnesia_users', JSON.stringify(users));
+
+    registerMsg.textContent = 'Pendaftaran berhasil! Mengarahkan ke halaman login...';
+    registerMsg.className = 'auth-msg success';
+    registerForm.reset();
+
+    setTimeout(function(){
+      window.location.href = 'login.html';
+    }, 1200);
+  });
+</script>
+
+</body>
+</html>

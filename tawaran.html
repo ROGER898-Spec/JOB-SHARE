@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tawaran Kerja — JOBnesia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="index.css">
+<style>
+  /* Styling khusus halaman ini saja -- daftar kartu tawaran kerja */
+  .tawaran-wrap{ padding: 56px 0 90px; }
+  .tawaran-head{ margin-bottom: 32px; }
+  .tawaran-head .eyebrow{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:0.78rem;
+    letter-spacing:0.06em; text-transform:uppercase; color:var(--teal); margin-bottom:10px;
+  }
+  .tawaran-head h1{ font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 8px; }
+  .tawaran-head p{ color: var(--ink-soft); }
+
+  .tawaran-filter{
+    display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap;
+  }
+  .tawaran-filter select{
+    padding:9px 14px; border-radius:999px; border:1.5px solid var(--line);
+    background: var(--paper-raised); font-family:'Inter',sans-serif; font-size:0.85rem;
+  }
+
+  .job-list{ display:flex; flex-direction:column; gap:16px; }
+  .job-card{
+    display:flex; justify-content:space-between; align-items:center; gap:20px;
+    padding:22px 24px; border-radius:var(--radius); border:1px solid var(--line);
+    background:var(--paper-raised); transition: border-color .15s ease, transform .15s ease;
+    flex-wrap:wrap;
+  }
+  .job-card:hover{ border-color:var(--teal); transform:translateY(-1px); }
+  .job-main h3{ font-family:'Plus Jakarta Sans',sans-serif; font-size:1.05rem; margin-bottom:6px; }
+  .job-main .job-desc{ color:var(--ink-soft); font-size:0.88rem; max-width:440px; margin-bottom:10px; }
+  .job-meta{ display:flex; gap:14px; flex-wrap:wrap; font-size:0.82rem; color:var(--ink-soft); }
+  .job-meta span{ display:flex; align-items:center; gap:5px; }
+  .job-meta svg{ width:14px; height:14px; }
+
+  .job-side{ text-align:right; min-width:150px; }
+  .job-budget{ font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:1.05rem; color:var(--teal-deep); margin-bottom:4px; }
+  .job-rating{ font-size:0.8rem; color:var(--ink-soft); margin-bottom:12px; }
+  .job-actions{ display:flex; gap:8px; justify-content:flex-end; }
+
+  .badge-status{
+    display:inline-block; padding:4px 10px; border-radius:999px; font-size:0.72rem; font-weight:600;
+    margin-left:8px;
+  }
+  .badge-menunggu{ background:rgba(242,169,59,0.18); color:#93630E; }
+  .badge-diterima{ background:rgba(14,110,92,0.12); color:var(--teal-deep); }
+
+  .empty-state{
+    text-align:center; padding:60px 20px; color:var(--ink-soft);
+    border:1.5px dashed var(--line); border-radius:var(--radius);
+  }
+
+  @media (max-width:640px){
+    .job-card{ flex-direction:column; align-items:flex-start; }
+    .job-side{ text-align:left; width:100%; }
+    .job-actions{ justify-content:flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<header id="site-header"></header>
+
+<main>
+  <section class="tawaran-wrap">
+    <div class="wrap">
+      <div class="tawaran-head">
+        <span class="eyebrow">Tawaran Kerja</span>
+        <h1>Kebutuhan terdekat yang cocok untukmu</h1>
+        <p>Daftar kebutuhan dari UMKM di sekitarmu. Terima yang paling sesuai jadwal dan lokasimu.</p>
+      </div>
+
+      <div class="tawaran-filter">
+        <select id="filterKategori">
+          <option value="">Semua Kategori</option>
+          <option value="fotografer">Fotografer Produk</option>
+          <option value="videografer">Videografer</option>
+          <option value="admin-medsos">Admin Media Sosial</option>
+          <option value="event">Bantuan Event / Bazar</option>
+          <option value="stok">Stok Opname</option>
+          <option value="packing">Packing &amp; Gudang</option>
+          <option value="kasir">Kasir Pengganti</option>
+          <option value="desainer">Desainer Konten</option>
+          <option value="lainnya">Lainnya</option>
+        </select>
+        <select id="filterSort">
+          <option value="terbaru">Terbaru</option>
+          <option value="budget-tinggi">Budget Tertinggi</option>
+        </select>
+      </div>
+
+      <div class="job-list" id="jobList">
+        <!-- diisi lewat JS -->
+      </div>
+
+      <div class="empty-state" id="emptyState" style="display:none;">
+        Belum ada kebutuhan yang cocok saat ini. Coba cek lagi nanti, ya.
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="components.js"></script>
+<script src="script.js"></script>
+<script>
+  // ---------- Guard: hanya Freelancer yang login yang boleh akses ----------
+  const currentUser = JSON.parse(localStorage.getItem('jobnesia_current_user') || 'null');
+  if(!currentUser || currentUser.role !== 'freelancer'){
+    window.location.href = 'login.html';
+  }
+
+  const KATEGORI_LABEL = {
+    fotografer: 'Fotografer Produk', videografer: 'Videografer',
+    'admin-medsos': 'Admin Media Sosial', event: 'Bantuan Event / Bazar',
+    stok: 'Stok Opname', packing: 'Packing & Gudang',
+    kasir: 'Kasir Pengganti', desainer: 'Desainer Konten', lainnya: 'Lainnya'
+  };
+
+  function formatRupiah(angka){
+    return 'Rp' + Number(angka).toLocaleString('id-ID');
+  }
+
+  function waktuRelatif(iso){
+    const diffMs = Date.now() - new Date(iso).getTime();
+    const menit = Math.floor(diffMs / 60000);
+    if(menit < 1) return 'Baru saja';
+    if(menit < 60) return menit + ' menit lalu';
+    const jam = Math.floor(menit / 60);
+    if(jam < 24) return jam + ' jam lalu';
+    return Math.floor(jam / 24) + ' hari lalu';
+  }
+
+  function renderJobs(){
+    const allJobs = JSON.parse(localStorage.getItem('jobnesia_jobs') || '[]');
+    const jobList = document.getElementById('jobList');
+    const emptyState = document.getElementById('emptyState');
+
+    const kategoriFilter = document.getElementById('filterKategori').value;
+    const sortMode = document.getElementById('filterSort').value;
+
+    // Hanya tampilkan job berstatus "menunggu" (belum diambil freelancer lain)
+    // ATAU job yang sudah diambil oleh freelancer yang sedang login (biar dia bisa lihat statusnya sendiri)
+    let jobs = allJobs.filter(function(j){
+      return j.status === 'menunggu' || j.freelancerId === currentUser.email;
+    });
+
+    if(kategoriFilter){
+      jobs = jobs.filter(function(j){ return j.kategori === kategoriFilter; });
+    }
+
+    if(sortMode === 'budget-tinggi'){
+      jobs.sort(function(a,b){ return b.budget - a.budget; });
+    } else {
+      jobs.sort(function(a,b){ return new Date(b.createdAt) - new Date(a.createdAt); });
+    }
+
+    if(jobs.length === 0){
+      jobList.innerHTML = '';
+      emptyState.style.display = 'block';
+      return;
+    }
+    emptyState.style.display = 'none';
+
+    jobList.innerHTML = jobs.map(function(job){
+      const isMine = job.freelancerId === currentUser.email;
+      const statusBadge = isMine
+        ? '<span class="badge-status badge-diterima">Kamu Terima</span>'
+        : '<span class="badge-status badge-menunggu">Menunggu</span>';
+
+      const actionBtn = isMine
+        ? '<button class="btn btn-ghost btn-sm" disabled>Sudah Diambil</button>'
+        : '<button class="btn btn-primary btn-sm" onclick="terimaJob(\'' + job.id + '\')">Terima Kerja</button>';
+
+      return (
+        '<div class="job-card">' +
+          '<div class="job-main">' +
+            '<h3>' + job.judul + statusBadge + '</h3>' +
+            '<p class="job-desc">' + job.deskripsi + '</p>' +
+            '<div class="job-meta">' +
+              '<span>📍 ' + job.lokasi + ' · dalam radius ' + job.radius + ' km</span>' +
+              '<span>⏱ ' + job.durasi + '</span>' +
+              '<span>🕒 ' + waktuRelatif(job.createdAt) + '</span>' +
+              '<span>🏪 ' + job.posterNama + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="job-side">' +
+            '<div class="job-budget">' + formatRupiah(job.budget) + '</div>' +
+            '<div class="job-rating">' + KATEGORI_LABEL[job.kategori] + '</div>' +
+            '<div class="job-actions">' + actionBtn + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  // Dipanggil dari tombol "Terima Kerja" lewat onclick di HTML hasil render
+  function terimaJob(jobId){
+    const allJobs = JSON.parse(localStorage.getItem('jobnesia_jobs') || '[]');
+    const idx = allJobs.findIndex(function(j){ return j.id === jobId; });
+    if(idx === -1) return;
+
+    if(allJobs[idx].status !== 'menunggu'){
+      alert('Waduh, kebutuhan ini baru saja diambil freelancer lain.');
+      renderJobs();
+      return;
+    }
+
+    allJobs[idx].status = 'diterima';
+    allJobs[idx].freelancerId = currentUser.email;
+    allJobs[idx].freelancerNama = currentUser.nama;
+
+    localStorage.setItem('jobnesia_jobs', JSON.stringify(allJobs));
+    renderJobs();
+  }
+
+  document.getElementById('filterKategori').addEventListener('change', renderJobs);
+  document.getElementById('filterSort').addEventListener('change', renderJobs);
+
+  renderJobs();
+</script>
+
+</body>
+</html>
