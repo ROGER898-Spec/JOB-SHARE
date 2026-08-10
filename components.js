@@ -57,7 +57,7 @@ function renderFooter(){
   footer.innerHTML =
     '<div class="wrap footer-inner">' +
       '<a href="index.html" class="logo" style="text-decoration:none;"><span class="dot"></span>JOBnesia</a>' +
-      '<p>Dibuat untuk GEMASTIK XIX 2026 — Kompetisi Pengembangan Perangkat Lunak</p>' +
+      '<p>Proyek ini diharapkan mampu membantu mempermudah para UMKM untuk mencari freelancer yang mereka butuhkan</p>' +
     '</div>';
 }
 
