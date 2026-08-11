@@ -1,10 +1,14 @@
 // @title Jobshare Backend API
 // @version 1.0
-// @description This is the official API documentation for the Jobshare platform (Auth, UMKM Profiles, and Job Vacancies).
+// @description This is the official API documentation for the Jobshare platform
 // @termsOfService http://swagger.io/terms/
 
 // @host localhost:8080
 // @BasePath /api/v1
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 package main
 
 import (
@@ -47,7 +51,26 @@ func main() {
 	jobUsecase := usecase.NewJobUsecase(jobRepo, 5*time.Second)
 	jobHandler := handler.NewJobHandler(jobUsecase)
 
-	httpDelivery.RegisterRoutes(app, authHandler, jobHandler)
+	umkmProfileRepo := postgres.NewUmkmProfileRepository(db)
+	umkmProfileUsecase := usecase.NewUmkmProfileUsecase(umkmProfileRepo, 5*time.Second)
+	umkmProfileHandler := handler.NewUmkmProfileHandler(umkmProfileUsecase)
+
+	freelancerProfileRepo := postgres.NewFreelancerProfileRepository(db)
+	freelancerProfileUsecase := usecase.NewFreelancerProfileUsecase(freelancerProfileRepo, 5*time.Second)
+	freelancerProfileHandler := handler.NewFreelancerProfileHandler(freelancerProfileUsecase)
+
+	jobApplicationRepo := postgres.NewJobApplicationRepository(db)
+	jobApplicationUsecase := usecase.NewJobApplicationUsecase(jobApplicationRepo, 5*time.Second)
+	jobApplicationHandler := handler.NewJobApplicationHandler(jobApplicationUsecase)
+
+	categoryRepo := postgres.NewCategoryRepository(db)
+	categoryUsecase := usecase.NewCategoryUsecase(categoryRepo, 5*time.Second)
+
+	skillRepo := postgres.NewSkillRepository(db)
+	skillUsecase := usecase.NewSkillUsecase(skillRepo, 5*time.Second)
+
+	masterDataHandler := handler.NewMasterDataHandler(categoryUsecase, skillUsecase)
+	httpDelivery.RegisterRoutes(app, authHandler, umkmProfileHandler, freelancerProfileHandler, jobHandler, jobApplicationHandler, masterDataHandler)
 
 	log.Fatal(app.Listen(":8080"))
 }

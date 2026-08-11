@@ -1,27 +1,102 @@
 basePath: /api/v1
 definitions:
-  request.CreateJobRequest:
+  request.CreateCategoryRequest:
     properties:
-      budget:
-        type: number
       description:
         type: string
-      status:
-        enum:
-        - open
-        - in_progress
-        - completed
-        - closed
+      name:
         type: string
+    required:
+    - name
+    type: object
+  request.CreateFreelancerProfileRequest:
+    properties:
+      bio_summary:
+        type: string
+      city:
+        type: string
+      cv_url:
+        type: string
+      full_name:
+        type: string
+      phone_number:
+        type: string
+      portfolio_link:
+        type: string
+      user_id:
+        type: string
+    required:
+    - full_name
+    - user_id
+    type: object
+  request.CreateJobAppRequest:
+    properties:
+      freelancer_id:
+        type: integer
+      job_id:
+        type: integer
+      pitch_message:
+        type: string
+    required:
+    - freelancer_id
+    - job_id
+    - pitch_message
+    type: object
+  request.CreateJobRequest:
+    properties:
+      budget_amount:
+        type: number
+      category_id:
+        type: integer
+      description:
+        type: string
+      skill_ids:
+        items:
+          type: integer
+        type: array
       title:
         type: string
       umkm_id:
         type: integer
     required:
-    - budget
+    - budget_amount
+    - category_id
     - description
+    - skill_ids
     - title
     - umkm_id
+    type: object
+  request.CreateSkillRequest:
+    properties:
+      category_id:
+        type: integer
+      name:
+        type: string
+    required:
+    - category_id
+    - name
+    type: object
+  request.CreateUmkmProfileRequest:
+    properties:
+      business_name:
+        type: string
+      city:
+        type: string
+      full_address:
+        type: string
+      owner_name:
+        type: string
+      phone_number:
+        type: string
+      user_id:
+        type: string
+    required:
+    - business_name
+    - city
+    - full_address
+    - owner_name
+    - phone_number
+    - user_id
     type: object
   request.LoginRequest:
     properties:
@@ -51,23 +126,123 @@ definitions:
     - password
     - role
     type: object
+  request.UpdateStatusRequest:
+    properties:
+      status:
+        enum:
+        - accepted
+        - rejected
+        - withdrawn
+        type: string
+    required:
+    - status
+    type: object
+  response.CategoryResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  response.FreelancerProfileResponse:
+    properties:
+      bio_summary:
+        type: string
+      city:
+        type: string
+      created_at:
+        type: string
+      cv_url:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: integer
+      phone_number:
+        type: string
+      portfolio_link:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  response.JobApplicationResponse:
+    properties:
+      applied_at:
+        type: string
+      freelancer_id:
+        type: integer
+      id:
+        type: integer
+      job_id:
+        type: integer
+      pitch_message:
+        type: string
+      status:
+        type: string
+    type: object
   response.JobResponse:
     properties:
-      budget:
+      budget_amount:
         type: number
+      category_id:
+        type: integer
       created_at:
         type: string
       description:
         type: string
       id:
-        type: string
+        type: integer
+      skills:
+        items:
+          $ref: '#/definitions/response.SkillResponse'
+        type: array
       status:
         type: string
       title:
         type: string
       umkm_id:
         type: integer
+    type: object
+  response.SkillResponse:
+    properties:
+      category_id:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  response.UmkmProfileResponse:
+    properties:
+      business_name:
+        type: string
+      city:
+        type: string
+      created_at:
+        type: string
+      full_address:
+        type: string
+      id:
+        type: integer
+      identity_document_url:
+        type: string
+      owner_name:
+        type: string
+      phone_number:
+        type: string
       updated_at:
+        type: string
+      user_id:
+        type: string
+      verification_status:
+        type: string
+      verified_at:
+        type: string
+      verified_by_admin_id:
         type: string
     type: object
   response.UserResponse:
@@ -88,12 +263,107 @@ definitions:
 host: localhost:8080
 info:
   contact: {}
-  description: This is the official API documentation for the Jobshare platform (Auth,
-    UMKM Profiles, and Job Vacancies).
+  description: This is the official API documentation for the Jobshare platform
   termsOfService: http://swagger.io/terms/
   title: Jobshare Backend API
   version: "1.0"
 paths:
+  /applications:
+    post:
+      consumes:
+      - application/json
+      description: Freelancer applies for a job
+      parameters:
+      - description: Application Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateJobAppRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.JobApplicationResponse'
+      security:
+      - BearerAuth: []
+      summary: Submit Job Application
+      tags:
+      - Job Applications
+  /applications/{id}/status:
+    patch:
+      parameters:
+      - description: Application ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Status Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update application status
+      tags:
+      - Job Applications
+  /applications/freelancer/{freelancer_id}:
+    get:
+      description: Retrieve a list of applications submitted by a specific freelancer
+      parameters:
+      - description: Freelancer ID
+        in: path
+        name: freelancer_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.JobApplicationResponse'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get applications by Freelancer ID
+      tags:
+      - Job Applications
+  /applications/job/{job_id}:
+    get:
+      parameters:
+      - description: Job ID
+        in: path
+        name: job_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.JobApplicationResponse'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get applications by Job ID
+      tags:
+      - Job Applications
   /auth/login:
     post:
       consumes:
@@ -149,11 +419,107 @@ paths:
       summary: Register a new account (UMKM / Freelancer)
       tags:
       - Auth
-  /jobs:
+  /categories:
+    get:
+      description: Retrieve a list of all project categories.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.CategoryResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get All Categories
+      tags:
+      - Master Data
+    post:
+      consumes:
+      - application/json
+      description: Add a new project category (e.g., IT, Design, Writing).
+      parameters:
+      - description: Category Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.CategoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create Project Category
+      tags:
+      - Master Data
+  /freelancers/profile:
+    post:
+      consumes:
+      - application/json
+      description: Complete the freelancer profile for a newly registered user.
+      parameters:
+      - description: Profile Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateFreelancerProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.FreelancerProfileResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create Freelancer Profile
+      tags:
+      - Freelancer Profile
+  /freelancers/profile/{user_id}:
     get:
       consumes:
       - application/json
-      description: Retrieve a list of all available job vacancies.
+      description: Retrieve freelancer profile details using User ID.
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.FreelancerProfileResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Freelancer Profile by User ID
+      tags:
+      - Freelancer Profile
+  /jobs:
+    get:
       produces:
       - application/json
       responses:
@@ -163,20 +529,15 @@ paths:
             items:
               $ref: '#/definitions/response.JobResponse'
             type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Get all job vacancies
+      summary: Get All Jobs
       tags:
       - Jobs
     post:
       consumes:
       - application/json
-      description: Post a new job vacancy into the system by an UMKM.
+      description: UMKM creates a new job post and specifies required skills.
       parameters:
-      - description: Create Job Payload
+      - description: Job Payload
         in: body
         name: request
         required: true
@@ -189,23 +550,118 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/response.JobResponse'
+      security:
+      - BearerAuth: []
+      summary: Create Job Posting
+      tags:
+      - Jobs
+  /jobs/{id}:
+    get:
+      parameters:
+      - description: Job ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.JobResponse'
+      summary: Get Job Details
+      tags:
+      - Jobs
+  /skills:
+    post:
+      consumes:
+      - application/json
+      description: Add a new skill under a specific category.
+      parameters:
+      - description: Skill Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateSkillRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.SkillResponse'
         "400":
           description: Bad Request
           schema:
             additionalProperties: true
             type: object
-      summary: Create a new job vacancy (UMKM)
+      summary: Create Skill
       tags:
-      - Jobs
-  /jobs/{id}:
+      - Master Data
+  /skills/category/{category_id}:
+    get:
+      description: Retrieve all skills associated with a specific category ID.
+      parameters:
+      - description: Category ID
+        in: path
+        name: category_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.SkillResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Skills by Category
+      tags:
+      - Master Data
+  /umkm/profile:
+    post:
+      consumes:
+      - application/json
+      description: Complete the UMKM profile for a newly registered user.
+      parameters:
+      - description: Profile Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateUmkmProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.UmkmProfileResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create UMKM Profile
+      tags:
+      - UMKM Profile
+  /umkm/profile/{user_id}:
     get:
       consumes:
       - application/json
-      description: Retrieve details of a specific job vacancy using its unique ID.
+      description: Retrieve UMKM profile details using User ID.
       parameters:
-      - description: Job ID
+      - description: User ID
         in: path
-        name: id
+        name: user_id
         required: true
         type: string
       produces:
@@ -214,13 +670,18 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.JobResponse'
+            $ref: '#/definitions/response.UmkmProfileResponse'
         "404":
           description: Not Found
           schema:
             additionalProperties: true
             type: object
-      summary: Get job vacancy by ID
+      summary: Get UMKM Profile by User ID
       tags:
-      - Jobs
+      - UMKM Profile
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
