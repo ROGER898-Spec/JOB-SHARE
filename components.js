@@ -8,7 +8,7 @@ const NAV_LINKS = [
   { label: 'Cara Kerja', href: 'cara-kerja.html' },
   { label: 'Jasa', href: 'jasa.html' },
   { label: 'Kontak', href: 'kontak.html' },
-  { label: 'About Us', href: 'about.html' }
+  { label: 'About Us', href: 'about.html' },
 ];
 
 function renderHeader(){
