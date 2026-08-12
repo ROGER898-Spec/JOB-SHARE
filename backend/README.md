@@ -91,23 +91,91 @@ Once the server is running, open your browser and navigate to:
 
 ## 📌 API Endpoints Reference
 
+### 🛠️ System & Documentation
+
+| Method | Endpoint              | Description                  |
+| :----- | :-------------------- | :--------------------------- |
+| `GET`  | `/health`             | Server health check endpoint |
+| `GET`  | `/swagger/index.html` | Swagger UI API Documentation |
+
+---
+
 ### 🔐 Auth (Phase 1)
 
-| Method | Endpoint                | Description                                               |
-| ------ | ----------------------- | --------------------------------------------------------- |
-| `POST` | `/api/v1/auth/register` | Register a new account (`admin`, `umkm`, or `freelancer`) |
-| `POST` | `/api/v1/auth/login`    | Authenticate user and obtain session/profile data         |
+| Method | Endpoint                | Description                                               | Access |
+| :----- | :---------------------- | :-------------------------------------------------------- | :----- |
+| `POST` | `/api/v1/auth/register` | Register a new account (`admin`, `umkm`, or `freelancer`) | Public |
+| `POST` | `/api/v1/auth/login`    | Authenticate user and obtain JWT token                    | Public |
 
-### 💼 Jobs / Vacancies (Phase 2)
+---
 
-| Method | Endpoint           | Description                                    |
-| ------ | ------------------ | ---------------------------------------------- |
-| `POST` | `/api/v1/jobs`     | Create a new job vacancy (UMKM)                |
-| `GET`  | `/api/v1/jobs`     | Retrieve a list of all available job vacancies |
-| `GET`  | `/api/v1/jobs/:id` | Retrieve job vacancy details by ID             |
+### 👤 Profiles (Phase 1)
 
-### 🛠️ System
+| Method | Endpoint                               | Description                    | Access       |
+| :----- | :------------------------------------- | :----------------------------- | :----------- |
+| `POST` | `/api/v1/umkm/profile`                 | Create UMKM Profile            | `UMKM`       |
+| `GET`  | `/api/v1/umkm/profile/:user_id`        | Get UMKM Profile details       | `Protected`  |
+| `POST` | `/api/v1/freelancers/profile`          | Create Freelancer Profile      | `Freelancer` |
+| `GET`  | `/api/v1/freelancers/profile/:user_id` | Get Freelancer Profile details | `Protected`  |
 
-| Method | Endpoint  | Description                  |
-| ------ | --------- | ---------------------------- |
-| `GET`  | `/health` | Server health check endpoint |
+---
+
+### 🗂️ Master Data (Phase 2)
+
+| Method | Endpoint                               | Description               | Access  |
+| :----- | :------------------------------------- | :------------------------ | :------ |
+| `GET`  | `/api/v1/categories`                   | Get all job categories    | Public  |
+| `GET`  | `/api/v1/skills/category/:category_id` | Get skills by category ID | Public  |
+| `POST` | `/api/v1/categories`                   | Create a new category     | `Admin` |
+| `POST` | `/api/v1/skills`                       | Create a new skill        | `Admin` |
+
+---
+
+### 💼 Jobs / Vacancies (Phase 3)
+
+| Method | Endpoint           | Description                                    | Access |
+| :----- | :----------------- | :--------------------------------------------- | :----- |
+| `GET`  | `/api/v1/jobs`     | Retrieve a list of all available job vacancies | Public |
+| `GET`  | `/api/v1/jobs/:id` | Retrieve job vacancy details by ID             | Public |
+| `POST` | `/api/v1/jobs`     | Create a new job post with required skills     | `UMKM` |
+
+---
+
+### 📝 Job Applications (Phase 4)
+
+| Method  | Endpoint                              | Description                                    | Access       |
+| :------ | :------------------------------------ | :--------------------------------------------- | :----------- |
+| `POST`  | `/api/v1/applications`                | Freelancer applies for a job                   | `Freelancer` |
+| `GET`   | `/api/v1/applications/job/:job_id`    | Get all applications for a specific job        | `UMKM`       |
+| `GET`   | `/api/v1/applications/freelancer/:id` | Get all applications submitted by a freelancer | `Freelancer` |
+| `PATCH` | `/api/v1/applications/:id/status`     | UMKM accepts/rejects an application            | `UMKM`       |
+
+---
+
+### 📋 Workspace & Kanban (Phase 5)
+
+| Method  | Endpoint                            | Description                                        | Access      |
+| :------ | :---------------------------------- | :------------------------------------------------- | :---------- |
+| `POST`  | `/api/v1/kanban/tasks`              | Create a new task for a job                        | `Protected` |
+| `GET`   | `/api/v1/kanban/jobs/:job_id/tasks` | Get all tasks for a specific job                   | `Protected` |
+| `PATCH` | `/api/v1/kanban/tasks/:id/status`   | Update task status (`todo`, `in_progress`, `done`) | `Protected` |
+
+---
+
+### 💳 Transactions & Escrow (Phase 6)
+
+| Method  | Endpoint                           | Description                        | Access      |
+| :------ | :--------------------------------- | :--------------------------------- | :---------- |
+| `POST`  | `/api/v1/transactions`             | Create escrow payment for a job    | `UMKM`      |
+| `GET`   | `/api/v1/transactions/job/:job_id` | Get transaction details for a job  | `Protected` |
+| `PATCH` | `/api/v1/transactions/:id/release` | Release escrow funds to freelancer | `UMKM`      |
+
+---
+
+### ⭐ Reviews & Ratings (Phase 7)
+
+| Method | Endpoint                         | Description                                 | Access      |
+| :----- | :------------------------------- | :------------------------------------------ | :---------- |
+| `POST` | `/api/v1/reviews`                | Give rating & feedback after job completion | `UMKM`      |
+| `GET`  | `/api/v1/reviews/job/:job_id`    | Get review for a specific job               | `Protected` |
+| `GET`  | `/api/v1/reviews/freelancer/:id` | Get all reviews for a freelancer            | `Protected` |

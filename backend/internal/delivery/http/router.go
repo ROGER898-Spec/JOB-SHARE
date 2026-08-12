@@ -17,6 +17,9 @@ func RegisterRoutes(
 	jobHandler *handler.JobHandler,
 	jobAppHandler *handler.JobApplicationHandler,
 	masterDataHandler *handler.MasterDataHandler,
+	kanbanHandler *handler.KanbanTaskHandler,
+	trxHandler *handler.TransactionHandler,
+	reviewHandler *handler.ReviewHandler,
 ) {
 	// Swagger Documentation
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
@@ -72,4 +75,19 @@ func RegisterRoutes(
 	// Master Data Create (Hanya Admin)
 	protected.Post("/categories", middleware.RoleGuard("admin"), masterDataHandler.CreateCategory)
 	protected.Post("/skills", middleware.RoleGuard("admin"), masterDataHandler.CreateSkill)
+
+	// Kanban Routes
+	protected.Post("/kanban/tasks", kanbanHandler.Create)
+	protected.Get("/kanban/jobs/:job_id/tasks", kanbanHandler.GetByJobID)
+	protected.Patch("/kanban/tasks/:id/status", kanbanHandler.UpdateStatus)
+
+	// Transaction Routes
+	protected.Post("/transactions", middleware.RoleGuard("umkm"), trxHandler.Create)
+	protected.Get("/transactions/job/:job_id", trxHandler.GetByJobID)
+	protected.Patch("/transactions/:id/release", middleware.RoleGuard("umkm"), trxHandler.ReleaseEscrow)
+
+	// Review Routes
+	protected.Post("/reviews", middleware.RoleGuard("umkm"), reviewHandler.Create)
+	protected.Get("/reviews/job/:job_id", reviewHandler.GetByJobID)
+	protected.Get("/reviews/freelancer/:freelancer_id", reviewHandler.GetByFreelancerID)
 }

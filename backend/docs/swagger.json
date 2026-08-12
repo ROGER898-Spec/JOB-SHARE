@@ -483,6 +483,234 @@
                 }
             }
         },
+        "/kanban/jobs/{job_id}/tasks": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieve all kanban tasks for a specific job",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Kanban"
+                ],
+                "summary": "Get Tasks by Job ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Job ID",
+                        "name": "job_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.KanbanTaskResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/kanban/tasks": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Add a new task to a job's workspace",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Kanban"
+                ],
+                "summary": "Create Kanban Task",
+                "parameters": [
+                    {
+                        "description": "Task Payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateKanbanTaskRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.KanbanTaskResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/kanban/tasks/{id}/status": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Move a task to todo, in_progress, or done",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Kanban"
+                ],
+                "summary": "Update Task Status",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Task ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Status Payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UpdateKanbanTaskStatusRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/reviews": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "UMKM gives a rating and feedback to the freelancer after job completion.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Create a Review",
+                "parameters": [
+                    {
+                        "description": "Review Payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateReviewRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.ReviewResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/reviews/freelancer/{freelancer_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Get reviews by Freelancer ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Freelancer ID",
+                        "name": "freelancer_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/response.ReviewResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/reviews/job/{job_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Get review by Job ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Job ID",
+                        "name": "job_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ReviewResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/skills": {
             "post": {
                 "description": "Add a new skill under a specific category.",
@@ -555,6 +783,113 @@
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "UMKM makes a payment for a job, funds are held in escrow.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Create a Transaction (Escrow)",
+                "parameters": [
+                    {
+                        "description": "Transaction Payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateTransactionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.TransactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/job/{job_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get transaction by Job ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Job ID",
+                        "name": "job_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.TransactionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/{id}/release": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "UMKM releases the held funds when job is done.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Release funds to Freelancer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Transaction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -742,6 +1077,52 @@
                 }
             }
         },
+        "request.CreateKanbanTaskRequest": {
+            "type": "object",
+            "required": [
+                "job_id",
+                "title"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "job_id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.CreateReviewRequest": {
+            "type": "object",
+            "required": [
+                "freelancer_id",
+                "job_id",
+                "rating",
+                "umkm_id"
+            ],
+            "properties": {
+                "feedback": {
+                    "type": "string"
+                },
+                "freelancer_id": {
+                    "type": "integer"
+                },
+                "job_id": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "umkm_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "request.CreateSkillRequest": {
             "type": "object",
             "required": [
@@ -754,6 +1135,35 @@
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "request.CreateTransactionRequest": {
+            "type": "object",
+            "required": [
+                "amount",
+                "freelancer_id",
+                "job_id",
+                "umkm_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "freelancer_id": {
+                    "type": "integer"
+                },
+                "job_id": {
+                    "type": "integer"
+                },
+                "payment_gateway_order_id": {
+                    "type": "string"
+                },
+                "payment_method": {
+                    "type": "string"
+                },
+                "umkm_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -824,6 +1234,22 @@
                         "admin",
                         "umkm",
                         "freelancer"
+                    ]
+                }
+            }
+        },
+        "request.UpdateKanbanTaskStatusRequest": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "todo",
+                        "in_progress",
+                        "done"
                     ]
                 }
             }
@@ -951,6 +1377,55 @@
                 }
             }
         },
+        "response.KanbanTaskResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "job_id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.ReviewResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "feedback": {
+                    "type": "string"
+                },
+                "freelancer_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "job_id": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "integer"
+                },
+                "umkm_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "response.SkillResponse": {
             "type": "object",
             "properties": {
@@ -962,6 +1437,38 @@
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "response.TransactionResponse": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "escrow_status": {
+                    "type": "string"
+                },
+                "freelancer_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "job_id": {
+                    "type": "integer"
+                },
+                "paid_at": {
+                    "type": "string"
+                },
+                "payment_gateway_order_id": {
+                    "type": "string"
+                },
+                "payment_method": {
+                    "type": "string"
+                },
+                "umkm_id": {
+                    "type": "integer"
                 }
             }
         },
