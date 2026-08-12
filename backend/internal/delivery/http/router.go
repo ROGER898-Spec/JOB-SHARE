@@ -4,6 +4,7 @@ import (
 	_ "github.com/FyaEdu/JOB-SHARE/backend/docs"
 	"github.com/FyaEdu/JOB-SHARE/backend/internal/delivery/http/handler"
 	"github.com/FyaEdu/JOB-SHARE/backend/internal/delivery/http/middleware"
+	"github.com/FyaEdu/JOB-SHARE/backend/internal/domain"
 
 	"github.com/gofiber/fiber/v2"
 	fiberSwagger "github.com/swaggo/fiber-swagger"
@@ -20,6 +21,7 @@ func RegisterRoutes(
 	kanbanHandler *handler.KanbanTaskHandler,
 	trxHandler *handler.TransactionHandler,
 	reviewHandler *handler.ReviewHandler,
+	auditLogRepo domain.AuditLogRepository,
 ) {
 	// Swagger Documentation
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
@@ -32,6 +34,8 @@ func RegisterRoutes(
 	})
 
 	api := app.Group("/api/v1")
+
+	api.Use(middleware.AuditLogMiddleware(auditLogRepo))
 
 	// ==========================================
 	// PUBLIC ROUTES (Tidak butuh token)

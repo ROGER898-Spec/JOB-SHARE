@@ -83,7 +83,9 @@ func main() {
 	reviewUsecase := usecase.NewReviewUsecase(reviewRepo, 5*time.Second)
 	reviewHandler := handler.NewReviewHandler(reviewUsecase)
 
-	httpDelivery.RegisterRoutes(app, authHandler, umkmProfileHandler, freelancerProfileHandler, jobHandler, jobApplicationHandler, masterDataHandler, kanbanHandler, trxHandler, reviewHandler)
+	auditLogRepo := postgres.NewAuditLogRepository(db)
+
+	httpDelivery.RegisterRoutes(app, authHandler, umkmProfileHandler, freelancerProfileHandler, jobHandler, jobApplicationHandler, masterDataHandler, kanbanHandler, trxHandler, reviewHandler, auditLogRepo)
 
 	log.Fatal(app.Listen(":8080"))
 }
