@@ -5,10 +5,10 @@
 
 const NAV_LINKS = [
   { label: 'Beranda', href: 'index.html' },
-  { label: 'About Us', href: 'about.html' },
+  { label: 'Cara Kerja', href: 'cara-kerja.html' },
   { label: 'Jasa', href: 'jasa.html' },
   { label: 'Kontak', href: 'kontak.html' },
-  { label: 'Cara Kerja', href: 'cara-kerja.html' },
+  { label: 'About Us', href: 'about.html' },
 ];
 
 function renderHeader(){
