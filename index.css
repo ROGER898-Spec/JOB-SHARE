@@ -7,9 +7,10 @@
     --teal-deep: #0A4F42;
     --chili: #E1442A;
     --kunyit: #F2A93B;
-    --line: #135245;
+    --line: #D8CFB8;
     --radius: 14px;
     --wrap: 1120px;
+    --font-colour: #135245;
   }
 
   *{ box-sizing: border-box; }
@@ -67,13 +68,12 @@
   .logo{
   display:flex;
   align-items:center;
-  gap:150px;
+  gap:8px;
   font-family:'Plus Jakarta Sans', sans-serif;
   font-weight:800;
   font-size: 1.3rem;
-  color: var(--line);   
+  color: var(--font-colour);   /* ganti dengan #CDA74B kalau mau versi lebih tegas */
 }
-  }
   .logo .dot{
     width: 10px; height:10px; border-radius: 50%;
     background: var(--chili);
@@ -719,7 +719,7 @@
   background: var(--paper-raised);
 }
 .team-avatar{
-  width: 64px; height:64px;
+  width: 108px; height:108px;
   border-radius: 50%;
   margin: 0 auto 16px;
   display:flex; align-items:center; justify-content:center;
@@ -727,6 +727,10 @@
   font-weight: 700;
   font-size: 1.1rem;
   color: #fff;
+}
+img.team-avatar{
+  object-fit: cover;
+  object-position: center;
 }
 .team-card h3{
   font-size: 1rem;
