@@ -1,0 +1,1 @@
+UPDATE job_applications SET status = $1 WHERE id = $2;
