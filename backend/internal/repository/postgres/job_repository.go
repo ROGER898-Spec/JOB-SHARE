@@ -32,6 +32,9 @@ func (r *jobRepository) Create(ctx context.Context, job *domain.Job) error {
 		job.Title,
 		job.Description,
 		job.BudgetAmount,
+		job.Location,
+		job.RadiusKm,
+		job.DurationLabel,
 		job.StartDate,
 		job.EndDate,
 	).Scan(
@@ -85,7 +88,8 @@ func (r *jobRepository) FindAll(ctx context.Context) ([]*domain.Job, error) {
 		var j domain.Job
 		err := rows.Scan(
 			&j.ID, &j.UmkmID, &j.CategoryID, &j.Title, &j.Description,
-			&j.BudgetAmount, &j.StartDate, &j.EndDate, &j.Status, &j.CreatedAt,
+			&j.BudgetAmount, &j.Location, &j.RadiusKm, &j.DurationLabel,
+			&j.StartDate, &j.EndDate, &j.Status, &j.CreatedAt,
 		)
 		if err != nil {
 			return nil, err
@@ -93,6 +97,17 @@ func (r *jobRepository) FindAll(ctx context.Context) ([]*domain.Job, error) {
 		jobs = append(jobs, &j)
 	}
 	return jobs, nil
+}
+
+func (r *jobRepository) UpdateStatus(ctx context.Context, id int, status string) error {
+	queryPath := filepath.Join("internal", "repository", "postgres", "queries", "job_update_status.sql")
+	queryBytes, err := os.ReadFile(queryPath)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.db.ExecContext(ctx, string(queryBytes), status, id)
+	return err
 }
 
 func (r *jobRepository) FindByID(ctx context.Context, id int) (*domain.Job, error) {
@@ -120,7 +135,8 @@ func (r *jobRepository) FindByID(ctx context.Context, id int) (*domain.Job, erro
 
 		err := rows.Scan(
 			&job.ID, &job.UmkmID, &job.CategoryID, &job.Title, &job.Description,
-			&job.BudgetAmount, &job.StartDate, &job.EndDate, &job.Status, &job.CreatedAt,
+			&job.BudgetAmount, &job.Location, &job.RadiusKm, &job.DurationLabel,
+			&job.StartDate, &job.EndDate, &job.Status, &job.CreatedAt,
 			&skillID, &skillCatID, &skillName,
 		)
 		if err != nil {

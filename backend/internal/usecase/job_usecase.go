@@ -11,6 +11,7 @@ type JobUsecase interface {
 	Create(ctx context.Context, job *domain.Job, skillIDs []int) (*domain.Job, error)
 	GetAll(ctx context.Context) ([]*domain.Job, error)
 	GetByID(ctx context.Context, id int) (*domain.Job, error)
+	UpdateStatus(ctx context.Context, id int, status string) error
 }
 
 type jobUsecase struct {
@@ -48,4 +49,11 @@ func (u *jobUsecase) GetAll(ctx context.Context) ([]*domain.Job, error) {
 
 func (u *jobUsecase) GetByID(ctx context.Context, id int) (*domain.Job, error) {
 	return u.jobRepo.FindByID(ctx, id)
+}
+
+func (u *jobUsecase) UpdateStatus(ctx context.Context, id int, status string) error {
+	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
+	defer cancel()
+
+	return u.jobRepo.UpdateStatus(ctx, id, status)
 }

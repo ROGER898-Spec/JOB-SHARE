@@ -3,65 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tawaran Kerja — JOBnesia</title>
+<title>Dashboard — JOBnesia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="index.css">
 <style>
-  /* Styling khusus halaman ini saja -- daftar kartu tawaran kerja */
-  .tawaran-wrap{ padding: 56px 0 90px; }
-  .tawaran-head{ margin-bottom: 32px; }
-  .tawaran-head .eyebrow{
+  .dash-wrap{ padding: 56px 0 90px; }
+  .dash-head{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:32px; flex-wrap:wrap; gap:16px; }
+  .dash-head .eyebrow{
     display:block; font-family:'IBM Plex Mono', monospace; font-size:0.78rem;
     letter-spacing:0.06em; text-transform:uppercase; color:var(--teal); margin-bottom:10px;
   }
-  .tawaran-head h1{ font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 8px; }
-  .tawaran-head p{ color: var(--ink-soft); }
+  .dash-head h1{ font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 6px; }
+  .dash-head p{ color: var(--ink-soft); }
 
-  .tawaran-filter{
-    display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap;
+  .dash-stats{ display:grid; grid-template-columns: repeat(4, 1fr); gap:14px; margin-bottom:36px; }
+  .dash-stat-card{
+    padding:20px; border-radius:var(--radius); border:1px solid var(--line);
+    background:var(--paper-raised); text-align:center;
   }
-  .tawaran-filter select{
-    padding:9px 14px; border-radius:999px; border:1.5px solid var(--line);
-    background: var(--paper-raised); font-family:'Inter',sans-serif; font-size:0.85rem;
-  }
+  .dash-stat-card .num{ font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:1.8rem; color:var(--teal-deep); }
+  .dash-stat-card .lbl{ font-size:0.78rem; color:var(--ink-soft); margin-top:4px; }
 
-  .job-list{ display:flex; flex-direction:column; gap:16px; }
-  .job-card{
-    display:flex; justify-content:space-between; align-items:center; gap:20px;
-    padding:22px 24px; border-radius:var(--radius); border:1px solid var(--line);
-    background:var(--paper-raised); transition: border-color .15s ease, transform .15s ease;
-    flex-wrap:wrap;
+  .dash-tabs{ display:flex; gap:8px; margin-bottom:24px; border-bottom:1px solid var(--line); }
+  .dash-tab{
+    padding:10px 4px; margin-right:20px; font-size:0.9rem; font-weight:600; color:var(--ink-soft);
+    border-bottom:2px solid transparent; cursor:pointer; background:none; border-top:none; border-left:none; border-right:none;
+    font-family:'Inter',sans-serif;
   }
-  .job-card:hover{ border-color:var(--teal); transform:translateY(-1px); }
-  .job-main h3{ font-family:'Plus Jakarta Sans',sans-serif; font-size:1.05rem; margin-bottom:6px; }
-  .job-main .job-desc{ color:var(--ink-soft); font-size:0.88rem; max-width:440px; margin-bottom:10px; }
-  .job-meta{ display:flex; gap:14px; flex-wrap:wrap; font-size:0.82rem; color:var(--ink-soft); }
-  .job-meta span{ display:flex; align-items:center; gap:5px; }
-  .job-meta svg{ width:14px; height:14px; }
+  .dash-tab.active{ color:var(--teal-deep); border-bottom-color:var(--teal); }
 
-  .job-side{ text-align:right; min-width:150px; }
-  .job-budget{ font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:1.05rem; color:var(--teal-deep); margin-bottom:4px; }
-  .job-rating{ font-size:0.8rem; color:var(--ink-soft); margin-bottom:12px; }
-  .job-actions{ display:flex; gap:8px; justify-content:flex-end; }
-
-  .badge-status{
-    display:inline-block; padding:4px 10px; border-radius:999px; font-size:0.72rem; font-weight:600;
-    margin-left:8px;
+  .riwayat-list{ display:flex; flex-direction:column; gap:14px; }
+  .riwayat-card{
+    display:flex; justify-content:space-between; align-items:center; gap:16px;
+    padding:18px 22px; border-radius:var(--radius); border:1px solid var(--line);
+    background:var(--paper-raised); flex-wrap:wrap;
   }
-  .badge-menunggu{ background:rgba(242,169,59,0.18); color:#93630E; }
-  .badge-diterima{ background:rgba(14,110,92,0.12); color:var(--teal-deep); }
+  .riwayat-main h4{ font-family:'Plus Jakarta Sans',sans-serif; font-size:0.98rem; margin-bottom:4px; }
+  .riwayat-meta{ font-size:0.8rem; color:var(--ink-soft); display:flex; gap:12px; flex-wrap:wrap; }
+  .riwayat-side{ text-align:right; }
+  .riwayat-budget{ font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--teal-deep); margin-bottom:6px; }
+
+  .badge-status{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:0.72rem; font-weight:600; margin-left:6px; }
+  .badge-menunggu, .badge-open, .badge-pending{ background:rgba(242,169,59,0.18); color:#93630E; }
+  .badge-diterima, .badge-in_progress, .badge-accepted{ background:rgba(14,110,92,0.12); color:var(--teal-deep); }
+  .badge-dikerjakan{ background:rgba(14,110,92,0.12); color:var(--teal-deep); }
+  .badge-selesai, .badge-completed{ background:rgba(74,84,77,0.12); color:var(--ink-soft); }
+  .badge-rejected, .badge-cancelled{ background:rgba(225,68,42,0.12); color:var(--chili); }
+
+  .applicant-list{ margin-top:14px; padding-top:14px; border-top:1px dashed var(--line); width:100%; display:flex; flex-direction:column; gap:10px; }
+  .applicant-row{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 12px; border-radius:10px; background:var(--paper); flex-wrap:wrap; }
+  .applicant-row .pitch{ font-size:0.82rem; color:var(--ink-soft); max-width:360px; }
+  .applicant-actions{ display:flex; gap:6px; }
 
   .empty-state{
     text-align:center; padding:60px 20px; color:var(--ink-soft);
     border:1.5px dashed var(--line); border-radius:var(--radius);
   }
 
-  @media (max-width:640px){
-    .job-card{ flex-direction:column; align-items:flex-start; }
-    .job-side{ text-align:left; width:100%; }
-    .job-actions{ justify-content:flex-start; }
+  select.status-select{
+    padding:6px 10px; border-radius:8px; border:1.5px solid var(--line);
+    background:var(--paper); font-family:'Inter',sans-serif; font-size:0.8rem;
+  }
+
+  @media (max-width:760px){
+    .dash-stats{ grid-template-columns: repeat(2, 1fr); }
+    .riwayat-card{ flex-direction:column; align-items:flex-start; }
+    .riwayat-side{ text-align:left; width:100%; }
   }
 </style>
 </head>
@@ -70,40 +79,31 @@
 <header id="site-header"></header>
 
 <main>
-  <section class="tawaran-wrap">
+  <section class="dash-wrap">
     <div class="wrap">
-      <div class="tawaran-head">
-        <span class="eyebrow">Tawaran Kerja</span>
-        <h1>Kebutuhan terdekat yang cocok untukmu</h1>
-        <p>Daftar kebutuhan dari UMKM di sekitarmu. Terima yang paling sesuai jadwal dan lokasimu.</p>
+
+      <div class="dash-head">
+        <div>
+          <span class="eyebrow" id="dashEyebrow">Dashboard</span>
+          <h1 id="dashTitle">Ringkasan Aktivitas</h1>
+          <p id="dashSubtitle">Pantau kebutuhan dan status pekerjaanmu di sini.</p>
+        </div>
+        <a id="dashCta" href="posting.html" class="btn btn-primary">Posting Kebutuhan Baru</a>
       </div>
 
-      <div class="tawaran-filter">
-        <select id="filterKategori">
-          <option value="">Semua Kategori</option>
-          <option value="fotografer">Fotografer Produk</option>
-          <option value="videografer">Videografer</option>
-          <option value="admin-medsos">Admin Media Sosial</option>
-          <option value="event">Bantuan Event / Bazar</option>
-          <option value="stok">Stok Opname</option>
-          <option value="packing">Packing &amp; Gudang</option>
-          <option value="kasir">Kasir Pengganti</option>
-          <option value="desainer">Desainer Konten</option>
-          <option value="lainnya">Lainnya</option>
-        </select>
-        <select id="filterSort">
-          <option value="terbaru">Terbaru</option>
-          <option value="budget-tinggi">Budget Tertinggi</option>
-        </select>
-      </div>
-
-      <div class="job-list" id="jobList">
+      <div class="dash-stats" id="dashStats">
         <!-- diisi lewat JS -->
       </div>
 
-      <div class="empty-state" id="emptyState" style="display:none;">
-        Belum ada kebutuhan yang cocok saat ini. Coba cek lagi nanti, ya.
+      <div class="dash-tabs" id="dashTabs">
+        <!-- diisi lewat JS, sesuai role -->
       </div>
+
+      <div class="riwayat-list" id="riwayatList"></div>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        Belum ada riwayat di sini.
+      </div>
+
     </div>
   </section>
 </main>
@@ -113,18 +113,34 @@
 <script src="components.js"></script>
 <script src="script.js"></script>
 <script>
-  // ---------- Guard: hanya Freelancer yang login yang boleh akses ----------
-  const currentUser = JSON.parse(localStorage.getItem('jobnesia_current_user') || 'null');
-  if(!currentUser || currentUser.role !== 'freelancer'){
+  const API_BASE = 'http://localhost:8080/api/v1';
+
+  async function apiFetch(path, options){
+    options = options || {};
+    const res = await fetch(API_BASE + path, {
+      method: options.method || 'GET',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, options.headers || {}),
+      body: options.body
+    });
+    const body = await res.json().catch(function(){ return {}; });
+    if(!res.ok){
+      throw new Error(body.message || 'Terjadi kesalahan, coba lagi.');
+    }
+    return body.data;
+  }
+
+  // ---------- Guard: harus login ----------
+  const session = JSON.parse(localStorage.getItem('jobnesia_session') || 'null');
+  const token = localStorage.getItem('jobnesia_token');
+  if(!session || !token){
     window.location.href = 'login.html';
   }
 
-  const KATEGORI_LABEL = {
-    fotografer: 'Fotografer Produk', videografer: 'Videografer',
-    'admin-medsos': 'Admin Media Sosial', event: 'Bantuan Event / Bazar',
-    stok: 'Stok Opname', packing: 'Packing & Gudang',
-    kasir: 'Kasir Pengganti', desainer: 'Desainer Konten', lainnya: 'Lainnya'
-  };
+  const isUmkm = session.role === 'umkm';
+  let activeFilter = 'semua';
+  let categoryLabels = {};
+  let myJobs = [];          // UMKM: job yang dia posting
+  let myApplications = [];  // Freelancer: lamaran dia + detail job-nya
 
   function formatRupiah(angka){
     return 'Rp' + Number(angka).toLocaleString('id-ID');
@@ -140,93 +156,247 @@
     return Math.floor(jam / 24) + ' hari lalu';
   }
 
-  function renderJobs(){
-    const allJobs = JSON.parse(localStorage.getItem('jobnesia_jobs') || '[]');
-    const jobList = document.getElementById('jobList');
-    const emptyState = document.getElementById('emptyState');
+  const STATUS_LABEL = {
+    open: 'Terbuka', in_progress: 'Berjalan', completed: 'Selesai', cancelled: 'Dibatalkan',
+    pending: 'Menunggu Respon', accepted: 'Diterima', rejected: 'Tidak Terpilih', withdrawn: 'Dibatalkan'
+  };
+  function badgeHtml(status){
+    return '<span class="badge-status badge-' + status + '">' + (STATUS_LABEL[status] || status) + '</span>';
+  }
 
-    const kategoriFilter = document.getElementById('filterKategori').value;
-    const sortMode = document.getElementById('filterSort').value;
-
-    // Hanya tampilkan job berstatus "menunggu" (belum diambil freelancer lain)
-    // ATAU job yang sudah diambil oleh freelancer yang sedang login (biar dia bisa lihat statusnya sendiri)
-    let jobs = allJobs.filter(function(j){
-      return j.status === 'menunggu' || j.freelancerId === currentUser.email;
+  // ---------- Setup header & tab sesuai role ----------
+  const dashTabs = document.getElementById('dashTabs');
+  if(isUmkm){
+    document.getElementById('dashEyebrow').textContent = 'Dashboard UMKM';
+    document.getElementById('dashTitle').textContent = 'Riwayat Kebutuhan Kamu';
+    document.getElementById('dashSubtitle').textContent = 'Semua kebutuhan yang pernah kamu posting beserta statusnya.';
+    dashTabs.innerHTML =
+      '<button class="dash-tab active" data-filter="semua">Semua</button>' +
+      '<button class="dash-tab" data-filter="open">Terbuka</button>' +
+      '<button class="dash-tab" data-filter="in_progress">Berjalan</button>' +
+      '<button class="dash-tab" data-filter="completed">Selesai</button>';
+  } else {
+    document.getElementById('dashEyebrow').textContent = 'Dashboard Freelancer';
+    document.getElementById('dashTitle').textContent = 'Riwayat Lamaran Kamu';
+    document.getElementById('dashSubtitle').textContent = 'Semua tawaran kerja yang pernah kamu lamar beserta statusnya.';
+    document.getElementById('dashCta').textContent = 'Cari Tawaran Kerja';
+    document.getElementById('dashCta').href = 'tawaran.html';
+    dashTabs.innerHTML =
+      '<button class="dash-tab active" data-filter="semua">Semua</button>' +
+      '<button class="dash-tab" data-filter="pending">Menunggu Respon</button>' +
+      '<button class="dash-tab" data-filter="accepted">Diterima</button>' +
+      '<button class="dash-tab" data-filter="rejected">Tidak Terpilih</button>';
+  }
+  document.querySelectorAll('.dash-tab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('.dash-tab').forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+      activeFilter = tab.getAttribute('data-filter');
+      isUmkm ? renderUmkm() : renderFreelancer();
     });
+  });
 
-    if(kategoriFilter){
-      jobs = jobs.filter(function(j){ return j.kategori === kategoriFilter; });
+  // ================= UMKM =================
+
+  function renderStats(total, waiting, active, done, labelTotal, labelWaiting){
+    document.getElementById('dashStats').innerHTML =
+      '<div class="dash-stat-card"><div class="num">' + total + '</div><div class="lbl">' + labelTotal + '</div></div>' +
+      '<div class="dash-stat-card"><div class="num">' + waiting + '</div><div class="lbl">' + labelWaiting + '</div></div>' +
+      '<div class="dash-stat-card"><div class="num">' + active + '</div><div class="lbl">Sedang Berjalan</div></div>' +
+      '<div class="dash-stat-card"><div class="num">' + done + '</div><div class="lbl">Selesai</div></div>';
+  }
+
+  function renderUmkm(){
+    const total = myJobs.length;
+    const open = myJobs.filter(function(j){ return j.status === 'open'; }).length;
+    const active = myJobs.filter(function(j){ return j.status === 'in_progress'; }).length;
+    const done = myJobs.filter(function(j){ return j.status === 'completed'; }).length;
+    renderStats(total, open, active, done, 'Total Diposting', 'Masih Terbuka');
+
+    let filtered = myJobs;
+    if(activeFilter !== 'semua'){
+      filtered = myJobs.filter(function(j){ return j.status === activeFilter; });
     }
+    filtered.sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); });
 
-    if(sortMode === 'budget-tinggi'){
-      jobs.sort(function(a,b){ return b.budget - a.budget; });
-    } else {
-      jobs.sort(function(a,b){ return new Date(b.createdAt) - new Date(a.createdAt); });
-    }
-
-    if(jobs.length === 0){
-      jobList.innerHTML = '';
+    const riwayatList = document.getElementById('riwayatList');
+    const emptyState = document.getElementById('emptyState');
+    if(filtered.length === 0){
+      riwayatList.innerHTML = '';
       emptyState.style.display = 'block';
       return;
     }
     emptyState.style.display = 'none';
 
-    jobList.innerHTML = jobs.map(function(job){
-      const isMine = job.freelancerId === currentUser.email;
-      const statusBadge = isMine
-        ? '<span class="badge-status badge-diterima">Kamu Terima</span>'
-        : '<span class="badge-status badge-menunggu">Menunggu</span>';
-
-      const actionBtn = isMine
-        ? '<button class="btn btn-ghost btn-sm" disabled>Sudah Diambil</button>'
-        : '<button class="btn btn-primary btn-sm" onclick="terimaJob(\'' + job.id + '\')">Terima Kerja</button>';
+    riwayatList.innerHTML = filtered.map(function(job){
+      const statusControl = job.status === 'open'
+        ? '<button class="btn btn-ghost btn-sm" onclick="toggleApplicants(' + job.id + ')">Lihat Pelamar</button>'
+        : '<select class="status-select" onchange="updateJobStatus(' + job.id + ', this.value)">' +
+            '<option value="in_progress"' + (job.status==='in_progress'?' selected':'') + '>Berjalan</option>' +
+            '<option value="completed"' + (job.status==='completed'?' selected':'') + '>Selesai</option>' +
+          '</select>';
 
       return (
-        '<div class="job-card">' +
-          '<div class="job-main">' +
-            '<h3>' + job.judul + statusBadge + '</h3>' +
-            '<p class="job-desc">' + job.deskripsi + '</p>' +
-            '<div class="job-meta">' +
-              '<span>📍 ' + job.lokasi + ' · dalam radius ' + job.radius + ' km</span>' +
-              '<span>⏱ ' + job.durasi + '</span>' +
-              '<span>🕒 ' + waktuRelatif(job.createdAt) + '</span>' +
-              '<span>🏪 ' + job.posterNama + '</span>' +
+        '<div class="riwayat-card" id="job-card-' + job.id + '">' +
+          '<div class="riwayat-main">' +
+            '<h4>' + job.title + badgeHtml(job.status) + '</h4>' +
+            '<div class="riwayat-meta">' +
+              '<span>📍 ' + (job.location || '-') + '</span>' +
+              '<span>' + (categoryLabels[job.category_id] || 'Lainnya') + '</span>' +
+              '<span>🕒 ' + waktuRelatif(job.created_at) + '</span>' +
             '</div>' +
+            '<div class="applicant-list" id="applicants-' + job.id + '" style="display:none;"></div>' +
           '</div>' +
-          '<div class="job-side">' +
-            '<div class="job-budget">' + formatRupiah(job.budget) + '</div>' +
-            '<div class="job-rating">' + KATEGORI_LABEL[job.kategori] + '</div>' +
-            '<div class="job-actions">' + actionBtn + '</div>' +
+          '<div class="riwayat-side">' +
+            '<div class="riwayat-budget">' + formatRupiah(job.budget_amount) + '</div>' +
+            statusControl +
           '</div>' +
         '</div>'
       );
     }).join('');
   }
 
-  // Dipanggil dari tombol "Terima Kerja" lewat onclick di HTML hasil render
-  function terimaJob(jobId){
-    const allJobs = JSON.parse(localStorage.getItem('jobnesia_jobs') || '[]');
-    const idx = allJobs.findIndex(function(j){ return j.id === jobId; });
-    if(idx === -1) return;
-
-    if(allJobs[idx].status !== 'menunggu'){
-      alert('Waduh, kebutuhan ini baru saja diambil freelancer lain.');
-      renderJobs();
+  // Buka/tutup panel pelamar untuk 1 job, muat dari backend sekali saat dibuka
+  async function toggleApplicants(jobId){
+    const panel = document.getElementById('applicants-' + jobId);
+    if(panel.style.display === 'block'){
+      panel.style.display = 'none';
       return;
     }
+    panel.style.display = 'block';
+    panel.innerHTML = 'Memuat pelamar...';
 
-    allJobs[idx].status = 'diterima';
-    allJobs[idx].freelancerId = currentUser.email;
-    allJobs[idx].freelancerNama = currentUser.nama;
-
-    localStorage.setItem('jobnesia_jobs', JSON.stringify(allJobs));
-    renderJobs();
+    try {
+      const apps = await apiFetch('/applications/job/' + jobId, { headers: { 'Authorization': 'Bearer ' + token } });
+      if(apps.length === 0){
+        panel.innerHTML = '<span style="font-size:0.85rem; color:var(--ink-soft);">Belum ada yang melamar.</span>';
+        return;
+      }
+      panel.innerHTML = apps.map(function(app){
+        if(app.status === 'pending'){
+          return '<div class="applicant-row">' +
+            '<div><b>Freelancer #' + app.freelancer_id + '</b> ' + badgeHtml(app.status) +
+              '<div class="pitch">' + app.pitch_message + '</div></div>' +
+            '<div class="applicant-actions">' +
+              '<button class="btn btn-primary btn-sm" onclick="respondApplicant(' + app.id + ', ' + jobId + ', \'accepted\')">Terima</button>' +
+              '<button class="btn btn-ghost btn-sm" onclick="respondApplicant(' + app.id + ', ' + jobId + ', \'rejected\')">Tolak</button>' +
+            '</div>' +
+          '</div>';
+        }
+        return '<div class="applicant-row">' +
+          '<div><b>Freelancer #' + app.freelancer_id + '</b> ' + badgeHtml(app.status) +
+            '<div class="pitch">' + app.pitch_message + '</div></div>' +
+        '</div>';
+      }).join('');
+    } catch(err){
+      panel.innerHTML = '<span style="font-size:0.85rem; color:var(--chili);">Gagal memuat: ' + err.message + '</span>';
+    }
   }
 
-  document.getElementById('filterKategori').addEventListener('change', renderJobs);
-  document.getElementById('filterSort').addEventListener('change', renderJobs);
+  // Terima/tolak pelamar. Kalau diterima, job otomatis dipindah ke status "Berjalan".
+  async function respondApplicant(appId, jobId, newStatus){
+    try {
+      await apiFetch('/applications/' + appId + '/status', {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if(newStatus === 'accepted'){
+        await apiFetch('/jobs/' + jobId + '/status', {
+          method: 'PATCH',
+          headers: { 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ status: 'in_progress' })
+        });
+      }
+      await loadData();
+    } catch(err){
+      alert('Gagal memproses: ' + err.message);
+    }
+  }
 
-  renderJobs();
+  // Dipanggil dari dropdown status (UMKM, job yang sudah berjalan)
+  async function updateJobStatus(jobId, newStatus){
+    try {
+      await apiFetch('/jobs/' + jobId + '/status', {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ status: newStatus })
+      });
+      await loadData();
+    } catch(err){
+      alert('Gagal mengubah status: ' + err.message);
+    }
+  }
+
+  // ================= FREELANCER =================
+
+  function renderFreelancer(){
+    const total = myApplications.length;
+    const pending = myApplications.filter(function(a){ return a.status === 'pending'; }).length;
+    const accepted = myApplications.filter(function(a){ return a.status === 'accepted'; }).length;
+    const rejected = myApplications.filter(function(a){ return a.status === 'rejected'; }).length;
+    renderStats(total, pending, accepted, rejected, 'Total Dilamar', 'Menunggu Respon');
+
+    let filtered = myApplications;
+    if(activeFilter !== 'semua'){
+      filtered = myApplications.filter(function(a){ return a.status === activeFilter; });
+    }
+    filtered.sort(function(a,b){ return new Date(b.applied_at) - new Date(a.applied_at); });
+
+    const riwayatList = document.getElementById('riwayatList');
+    const emptyState = document.getElementById('emptyState');
+    if(filtered.length === 0){
+      riwayatList.innerHTML = '';
+      emptyState.style.display = 'block';
+      return;
+    }
+    emptyState.style.display = 'none';
+
+    riwayatList.innerHTML = filtered.map(function(app){
+      const job = app.job;
+      return (
+        '<div class="riwayat-card">' +
+          '<div class="riwayat-main">' +
+            '<h4>' + job.title + badgeHtml(app.status) + '</h4>' +
+            '<div class="riwayat-meta">' +
+              '<span>📍 ' + (job.location || '-') + '</span>' +
+              '<span>Status kebutuhan: ' + STATUS_LABEL[job.status] + '</span>' +
+              '<span>🕒 ' + waktuRelatif(app.applied_at) + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="riwayat-side">' +
+            '<div class="riwayat-budget">' + formatRupiah(job.budget_amount) + '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  // ================= MUAT DATA =================
+
+  async function loadData(){
+    const categories = await apiFetch('/categories');
+    categories.forEach(function(cat){ categoryLabels[cat.id] = cat.name; });
+
+    const allJobs = await apiFetch('/jobs');
+
+    if(isUmkm){
+      myJobs = allJobs.filter(function(j){ return j.umkm_id === session.profileId; });
+      renderUmkm();
+    } else {
+      const apps = await apiFetch('/applications/freelancer/' + session.profileId, {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const jobById = {};
+      allJobs.forEach(function(j){ jobById[j.id] = j; });
+      myApplications = apps
+        .map(function(a){ return Object.assign({}, a, { job: jobById[a.job_id] }); })
+        .filter(function(a){ return a.job; }); // buang kalau job-nya somehow sudah tidak ada
+      renderFreelancer();
+    }
+  }
+
+  loadData();
 </script>
 
 </body>

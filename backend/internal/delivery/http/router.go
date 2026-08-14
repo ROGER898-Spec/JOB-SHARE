@@ -6,6 +6,7 @@ import (
 	"github.com/FyaEdu/JOB-SHARE/backend/internal/delivery/http/middleware"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
@@ -18,6 +19,15 @@ func RegisterRoutes(
 	jobAppHandler *handler.JobApplicationHandler,
 	masterDataHandler *handler.MasterDataHandler,
 ) {
+	// CORS — wajib ada supaya frontend (beda origin/port dari backend) boleh manggil API ini.
+	// Untuk development "*" dulu; kalau sudah deploy, ganti ke domain frontend asli
+	// (mis. "https://jobnesia.vercel.app") supaya lebih aman.
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+		AllowMethods: "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+	}))
+
 	// Swagger Documentation
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
@@ -62,6 +72,7 @@ func RegisterRoutes(
 
 	// Job Posting (Hanya UMKM)
 	protected.Post("/jobs", middleware.RoleGuard("umkm"), jobHandler.Create)
+	protected.Patch("/jobs/:id/status", middleware.RoleGuard("umkm"), jobHandler.UpdateStatus)
 
 	// Job Application Routes
 	protected.Post("/applications", middleware.RoleGuard("freelancer"), jobAppHandler.Apply)
