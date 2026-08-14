@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Masuk — GigSearch</title>
+<title>Masuk — JOBnesia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -51,38 +51,76 @@
 <script src="components.js"></script>
 <script src="script.js"></script>
 <script>
-  // Login — simulasi cek ke localStorage (belum ada backend sungguhan)
+  // Login — panggil backend beneran, simpan token + profil buat dipakai halaman lain
+  const API_BASE = 'http://localhost:8080/api/v1';
+
+  async function apiFetch(path, options){
+    options = options || {};
+    const res = await fetch(API_BASE + path, {
+      method: options.method || 'GET',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, options.headers || {}),
+      body: options.body
+    });
+    const body = await res.json().catch(function(){ return {}; });
+    if(!res.ok){
+      throw new Error(body.message || 'Terjadi kesalahan, coba lagi.');
+    }
+    return body.data;
+  }
+
   const loginForm = document.getElementById('loginForm');
   const formError = document.getElementById('formError');
   const loginMsg = document.getElementById('loginMsg');
 
-  loginForm.addEventListener('submit', function(e){
+  loginForm.addEventListener('submit', async function(e){
     e.preventDefault();
+    formError.style.display = 'none';
+    loginMsg.textContent = 'Memeriksa akun...';
+    loginMsg.className = 'auth-msg';
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
-    const users = JSON.parse(localStorage.getItem('jobnesia_users') || '[]');
-    const match = users.find(function(u){ return u.email === email && u.password === password; });
+    try {
+      const loginData = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email: email, password: password })
+      });
+      const token = loginData.token;
+      const userId = loginData.user.id;
+      const role = loginData.user.role;
 
-    if(!match){
+      // Ambil profil (buat dapetin profileId & nama tampilan — dibutuhkan
+      // posting.html/tawaran.html/dashboard.html)
+      let profile, nama;
+      if(role === 'umkm'){
+        profile = await apiFetch('/umkm/profile/' + userId, { headers: { 'Authorization': 'Bearer ' + token } });
+        nama = profile.owner_name;
+      } else {
+        profile = await apiFetch('/freelancers/profile/' + userId, { headers: { 'Authorization': 'Bearer ' + token } });
+        nama = profile.full_name;
+      }
+
+      localStorage.setItem('jobnesia_token', token);
+      localStorage.setItem('jobnesia_session', JSON.stringify({
+        userId: userId,
+        role: role,
+        nama: nama,
+        profileId: profile.id
+      }));
+
+      loginMsg.textContent = 'Berhasil masuk sebagai ' + nama + '! Mengarahkan...';
+      loginMsg.className = 'auth-msg success';
+
+      setTimeout(function(){
+        window.location.href = 'dashboard.html';
+      }, 1000);
+
+    } catch(err){
+      formError.textContent = err.message;
       formError.style.display = 'block';
       loginMsg.textContent = '';
-      return;
     }
-    formError.style.display = 'none';
-
-    // Simpan siapa yang sedang login (simulasi sesi)
-    localStorage.setItem('jobnesia_current_user', JSON.stringify(match));
-
-    loginMsg.textContent = 'Berhasil masuk sebagai ' + match.nama + '! Mengarahkan...';
-    loginMsg.className = 'auth-msg success';
-
-    setTimeout(function(){
-      // Nanti diarahkan ke dashboard sesuai role — untuk sekarang balik ke beranda dulu
-      // karena halaman dashboard belum dibuat
-      window.location.href = 'index.html';
-    }, 1200);
   });
 </script>
 

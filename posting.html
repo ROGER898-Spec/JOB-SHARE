@@ -38,16 +38,7 @@
           <div class="form-group">
             <label for="kategori">Kategori</label>
             <select id="kategori" required>
-              <option value="">Pilih kategori</option>
-              <option value="fotografer">Fotografer Produk</option>
-              <option value="videografer">Videografer</option>
-              <option value="admin-medsos">Admin Media Sosial</option>
-              <option value="event">Bantuan Event / Bazar</option>
-              <option value="stok">Stok Opname</option>
-              <option value="packing">Packing &amp; Gudang</option>
-              <option value="kasir">Kasir Pengganti</option>
-              <option value="desainer">Desainer Konten</option>
-              <option value="lainnya">Lainnya</option>
+              <option value="">Memuat kategori...</option>
             </select>
           </div>
 
@@ -124,12 +115,42 @@
 <script src="components.js"></script>
 <script src="script.js"></script>
 <script>
+  const API_BASE = 'http://localhost:8080/api/v1';
+
+  async function apiFetch(path, options){
+    options = options || {};
+    const res = await fetch(API_BASE + path, {
+      method: options.method || 'GET',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, options.headers || {}),
+      body: options.body
+    });
+    const body = await res.json().catch(function(){ return {}; });
+    if(!res.ok){
+      throw new Error(body.message || 'Terjadi kesalahan, coba lagi.');
+    }
+    return body.data;
+  }
+
   // ---------- Guard: hanya UMKM yang login yang boleh akses halaman ini ----------
-  const currentUser = JSON.parse(localStorage.getItem('jobnesia_current_user') || 'null');
-  if(!currentUser || currentUser.role !== 'umkm'){
-    // Belum login / bukan UMKM -> redirect ke login
+  const session = JSON.parse(localStorage.getItem('jobnesia_session') || 'null');
+  const token = localStorage.getItem('jobnesia_token');
+  if(!session || !token || session.role !== 'umkm'){
     window.location.href = 'login.html';
   }
+
+  // ---------- Muat kategori asli dari backend ----------
+  const kategoriSelect = document.getElementById('kategori');
+  apiFetch('/categories').then(function(categories){
+    kategoriSelect.innerHTML = '<option value="">Pilih kategori</option>';
+    categories.forEach(function(cat){
+      const opt = document.createElement('option');
+      opt.value = cat.id;
+      opt.textContent = cat.name;
+      kategoriSelect.appendChild(opt);
+    });
+  }).catch(function(){
+    kategoriSelect.innerHTML = '<option value="">Gagal memuat kategori — cek koneksi ke backend</option>';
+  });
 
   // ---------- Radius slider live label ----------
   const radiusInput = document.getElementById('radius');
@@ -144,73 +165,77 @@
   const postingSection = document.getElementById('postingSection');
   const resultSection = document.getElementById('resultSection');
 
-  postingForm.addEventListener('submit', function(e){
+  postingForm.addEventListener('submit', async function(e){
     e.preventDefault();
 
     const judul = document.getElementById('judul').value;
     const deskripsi = document.getElementById('deskripsi').value;
-    const kategori = document.getElementById('kategori').value;
+    const kategoriId = kategoriSelect.value;
     const durasi = document.getElementById('durasi').value;
     const lokasi = document.getElementById('lokasi').value;
     const radius = radiusInput.value;
     const budget = document.getElementById('budget').value;
 
-    if(!judul || !deskripsi || !kategori || !durasi || !lokasi || !budget){
+    if(!judul || !deskripsi || !kategoriId || !durasi || !lokasi || !budget){
+      formError.textContent = 'Lengkapi semua data dulu, ya.';
       formError.style.display = 'block';
       return;
     }
     formError.style.display = 'none';
 
-    // ---------- Simpan job ke localStorage (skema disepakati bersama tim) ----------
-    const jobs = JSON.parse(localStorage.getItem('jobnesia_jobs') || '[]');
-    const jobId = 'job_' + Date.now();
-    const noNota = String(Math.floor(Math.random() * 900) + 100) + '/' + romawiBulan() + '/' + String(new Date().getFullYear()).slice(-2);
+    try {
+      // Kategori di seed dengan 1 skill default per kategori (nama sama) —
+      // dipakai dulu supaya field skill_ids (wajib diisi) bisa terkirim tanpa
+      // perlu UI pemilihan skill secara terpisah.
+      const skills = await apiFetch('/skills/category/' + kategoriId);
+      const skillIds = skills.length ? [skills[0].id] : [];
 
-    const newJob = {
-      id: jobId,
-      noNota: noNota,
-      posterId: currentUser.email,
-      posterNama: currentUser.namaUsaha || currentUser.nama,
-      judul: judul,
-      deskripsi: deskripsi,
-      kategori: kategori,
-      durasi: durasi,
-      lokasi: lokasi,
-      radius: Number(radius),
-      budget: Number(budget),
-      status: 'menunggu', // menunggu -> diterima -> dikerjakan -> selesai
-      freelancerId: null,
-      freelancerNama: null,
-      createdAt: new Date().toISOString()
-    };
+      const newJob = await apiFetch('/jobs', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({
+          umkm_id: session.profileId,
+          category_id: Number(kategoriId),
+          title: judul,
+          description: deskripsi,
+          budget_amount: Number(budget),
+          location: lokasi,
+          radius_km: Number(radius),
+          duration_label: durasi,
+          skill_ids: skillIds
+        })
+      });
 
-    jobs.push(newJob);
-    localStorage.setItem('jobnesia_jobs', JSON.stringify(jobs));
+      const noNota = String(Math.floor(Math.random() * 900) + 100) + '/' + romawiBulan() + '/' + String(new Date().getFullYear()).slice(-2);
 
-    // ---------- Simulasi jumlah freelancer terdekat (demo, belum ada matching asli) ----------
-    // Semakin besar radius, semakin banyak "freelancer ditemukan" -- ini simulasi untuk keperluan demo
-    const simulatedCount = Math.min(20, Math.max(3, Math.round(Number(radius) * 1.8)));
+      // ---------- Simulasi jumlah freelancer terdekat (demo — matching asli belum ada) ----------
+      const simulatedCount = Math.min(20, Math.max(3, Math.round(Number(radius) * 1.8)));
 
-    // ---------- Tampilkan hasil ----------
-    document.getElementById('resultNo').innerHTML = 'NOTA KEBUTUHAN<br>No. ' + noNota;
-    document.getElementById('resJudul').textContent = judul;
-    document.getElementById('resDurasi').textContent = durasi;
-    document.getElementById('resLokasi').textContent = lokasi;
-    document.getElementById('resRadius').textContent = radius + ' km';
-    document.getElementById('resMsg').textContent = 'Terkirim ke ' + simulatedCount + ' freelancer terdekat';
+      // ---------- Tampilkan hasil ----------
+      document.getElementById('resultNo').innerHTML = 'NOTA KEBUTUHAN<br>No. ' + noNota + ' (job #' + newJob.id + ')';
+      document.getElementById('resJudul').textContent = judul;
+      document.getElementById('resDurasi').textContent = durasi;
+      document.getElementById('resLokasi').textContent = lokasi;
+      document.getElementById('resRadius').textContent = radius + ' km';
+      document.getElementById('resMsg').textContent = 'Terkirim ke ' + simulatedCount + ' freelancer terdekat';
 
-    postingSection.style.display = 'none';
-    resultSection.style.display = 'block';
+      postingSection.style.display = 'none';
+      resultSection.style.display = 'block';
 
-    // ---------- Timer berjalan (simulasi "menunggu respons") ----------
-    let seconds = 0;
-    const timerEl = document.getElementById('resTimer');
-    const timerInterval = setInterval(function(){
-      seconds++;
-      const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
-      const ss = String(seconds % 60).padStart(2, '0');
-      timerEl.textContent = '⏱ ' + mm + ':' + ss + ' — menunggu respons pertama';
-    }, 1000);
+      // ---------- Timer berjalan (simulasi "menunggu respons") ----------
+      let seconds = 0;
+      const timerEl = document.getElementById('resTimer');
+      const timerInterval = setInterval(function(){
+        seconds++;
+        const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const ss = String(seconds % 60).padStart(2, '0');
+        timerEl.textContent = '⏱ ' + mm + ':' + ss + ' — menunggu respons pertama';
+      }, 1000);
+
+    } catch(err){
+      formError.textContent = err.message;
+      formError.style.display = 'block';
+    }
   });
 
   function romawiBulan(){

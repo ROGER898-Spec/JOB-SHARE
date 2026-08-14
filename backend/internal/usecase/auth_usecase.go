@@ -6,12 +6,13 @@ import (
 	"time"
 
 	"github.com/FyaEdu/JOB-SHARE/backend/internal/domain"
+	jwtPkg "github.com/FyaEdu/JOB-SHARE/backend/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthUsecase interface {
 	Register(ctx context.Context, email, password, role string) (*domain.User, error)
-	Login(ctx context.Context, email, password string) (*domain.User, error)
+	Login(ctx context.Context, email, password string) (*domain.User, string, error)
 }
 
 type authUsecase struct {
@@ -58,22 +59,27 @@ func (u *authUsecase) Register(ctx context.Context, email, password, role string
 	return newUser, nil
 }
 
-func (u *authUsecase) Login(ctx context.Context, email, password string) (*domain.User, error) {
+func (u *authUsecase) Login(ctx context.Context, email, password string) (*domain.User, string, error) {
 	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
 	defer cancel()
 
 	user, err := u.userRepo.FindByEmail(ctx, email)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	if user == nil {
-		return nil, errors.New("invalid email or password")
+		return nil, "", errors.New("invalid email or password")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
-		return nil, errors.New("invalid email or password")
+		return nil, "", errors.New("invalid email or password")
 	}
 
-	return user, nil
+	token, err := jwtPkg.GenerateToken(user.ID, user.Role)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return user, token, nil
 }

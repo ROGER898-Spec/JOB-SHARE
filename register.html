@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daftar — GigSearch</title>
+<title>Daftar — JOBnesia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
       <div class="auth-card">
         <div class="auth-head">
           <span class="eyebrow">Daftar Akun</span>
-          <h1>Gabung ke GigSearch</h1>
+          <h1>Gabung ke JOBnesia</h1>
           <p>Pilih peranmu untuk mulai — sebagai pemilik UMKM atau sebagai freelancer.</p>
         </div>
 
@@ -47,6 +47,14 @@
             <div class="form-group">
               <label for="namaUsaha">Nama Usaha</label>
               <input type="text" id="namaUsaha">
+            </div>
+            <div class="form-group">
+              <label for="noTelepon">Nomor Telepon</label>
+              <input type="tel" id="noTelepon" placeholder="08xxxxxxxxxx">
+            </div>
+            <div class="form-group">
+              <label for="alamatLengkap">Alamat Lengkap Usaha</label>
+              <input type="text" id="alamatLengkap">
             </div>
           </div>
 
@@ -127,12 +135,28 @@
     setRole(preselect);
   }
 
-  // Submit — simulasi pakai localStorage (belum ada backend sungguhan)
+  // Submit — daftar akun beneran ke backend, lalu bikin profil sesuai role
+  const API_BASE = 'http://localhost:8080/api/v1';
+
+  async function apiFetch(path, options){
+    options = options || {};
+    const res = await fetch(API_BASE + path, {
+      method: options.method || 'GET',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, options.headers || {}),
+      body: options.body
+    });
+    const body = await res.json().catch(function(){ return {}; });
+    if(!res.ok){
+      throw new Error(body.message || 'Terjadi kesalahan, coba lagi.');
+    }
+    return body.data;
+  }
+
   const registerForm = document.getElementById('registerForm');
   const formError = document.getElementById('formError');
   const registerMsg = document.getElementById('registerMsg');
 
-  registerForm.addEventListener('submit', function(e){
+  registerForm.addEventListener('submit', async function(e){
     e.preventDefault();
 
     if(!selectedRole){
@@ -141,35 +165,79 @@
     }
     formError.style.display = 'none';
 
-    const user = {
-      nama: document.getElementById('nama').value,
-      role: selectedRole,
-      namaUsaha: selectedRole === 'umkm' ? document.getElementById('namaUsaha').value : null,
-      kategoriJasa: selectedRole === 'freelancer' ? document.getElementById('kategoriJasa').value : null,
-      lokasi: document.getElementById('lokasi').value,
-      email: document.getElementById('email').value,
-      password: document.getElementById('password').value // catatan: demo saja, jangan simpan password polos di sistem asli
-    };
+    const nama = document.getElementById('nama').value;
+    const lokasi = document.getElementById('lokasi').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value; // catatan: demo saja, jangan simpan password polos di sistem asli
 
-    // Simpan ke daftar user di localStorage (simulasi database)
-    const users = JSON.parse(localStorage.getItem('jobnesia_users') || '[]');
-    const alreadyExists = users.some(function(u){ return u.email === user.email; });
-    if(alreadyExists){
-      registerMsg.textContent = 'Email ini sudah terdaftar. Coba masuk lewat halaman Login.';
+    registerMsg.textContent = 'Memproses pendaftaran...';
+    registerMsg.className = 'auth-msg';
+
+    try {
+      // 1. Bikin akun (users)
+      await apiFetch('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ email: email, password: password, role: selectedRole })
+      });
+
+      // 2. Login otomatis — bikin profil butuh token, dan register sendiri belum ngasih token
+      const loginData = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email: email, password: password })
+      });
+      const token = loginData.token;
+      const userId = loginData.user.id;
+
+      // 3. Bikin profil sesuai role yang dipilih
+      let profile;
+      if(selectedRole === 'umkm'){
+        profile = await apiFetch('/umkm/profile', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({
+            user_id: userId,
+            business_name: document.getElementById('namaUsaha').value,
+            owner_name: nama,
+            phone_number: document.getElementById('noTelepon').value,
+            city: lokasi,
+            full_address: document.getElementById('alamatLengkap').value
+          })
+        });
+      } else {
+        profile = await apiFetch('/freelancers/profile', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({
+            user_id: userId,
+            full_name: nama,
+            city: lokasi
+          })
+        });
+        // Catatan: "Kategori Jasa Utama" belum ada tempatnya di profil freelancer
+        // versi backend saat ini — belum dikirim ke mana pun untuk sementara.
+      }
+
+      // 4. Simpan sesi (dipakai posting.html / tawaran.html / dashboard.html)
+      localStorage.setItem('jobnesia_token', token);
+      localStorage.setItem('jobnesia_session', JSON.stringify({
+        userId: userId,
+        role: selectedRole,
+        nama: nama,
+        profileId: profile.id
+      }));
+
+      registerMsg.textContent = 'Pendaftaran berhasil! Mengarahkan ke dashboard...';
+      registerMsg.className = 'auth-msg success';
+      registerForm.reset();
+
+      setTimeout(function(){
+        window.location.href = 'dashboard.html';
+      }, 1200);
+
+    } catch(err){
+      registerMsg.textContent = err.message;
       registerMsg.className = 'auth-msg error';
-      return;
     }
-
-    users.push(user);
-    localStorage.setItem('jobnesia_users', JSON.stringify(users));
-
-    registerMsg.textContent = 'Pendaftaran berhasil! Mengarahkan ke halaman login...';
-    registerMsg.className = 'auth-msg success';
-    registerForm.reset();
-
-    setTimeout(function(){
-      window.location.href = 'login.html';
-    }, 1200);
   });
 </script>
 
