@@ -66,6 +66,38 @@ definitions:
     - title
     - umkm_id
     type: object
+  request.CreateKanbanTaskRequest:
+    properties:
+      description:
+        type: string
+      job_id:
+        type: integer
+      title:
+        type: string
+    required:
+    - job_id
+    - title
+    type: object
+  request.CreateReviewRequest:
+    properties:
+      feedback:
+        type: string
+      freelancer_id:
+        type: integer
+      job_id:
+        type: integer
+      rating:
+        maximum: 5
+        minimum: 1
+        type: integer
+      umkm_id:
+        type: integer
+    required:
+    - freelancer_id
+    - job_id
+    - rating
+    - umkm_id
+    type: object
   request.CreateSkillRequest:
     properties:
       category_id:
@@ -75,6 +107,26 @@ definitions:
     required:
     - category_id
     - name
+    type: object
+  request.CreateTransactionRequest:
+    properties:
+      amount:
+        type: number
+      freelancer_id:
+        type: integer
+      job_id:
+        type: integer
+      payment_gateway_order_id:
+        type: string
+      payment_method:
+        type: string
+      umkm_id:
+        type: integer
+    required:
+    - amount
+    - freelancer_id
+    - job_id
+    - umkm_id
     type: object
   request.CreateUmkmProfileRequest:
     properties:
@@ -125,6 +177,17 @@ definitions:
     - email
     - password
     - role
+    type: object
+  request.UpdateKanbanTaskStatusRequest:
+    properties:
+      status:
+        enum:
+        - todo
+        - in_progress
+        - done
+        type: string
+    required:
+    - status
     type: object
   request.UpdateStatusRequest:
     properties:
@@ -207,6 +270,38 @@ definitions:
       umkm_id:
         type: integer
     type: object
+  response.KanbanTaskResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      job_id:
+        type: integer
+      status:
+        type: string
+      title:
+        type: string
+    type: object
+  response.ReviewResponse:
+    properties:
+      created_at:
+        type: string
+      feedback:
+        type: string
+      freelancer_id:
+        type: integer
+      id:
+        type: integer
+      job_id:
+        type: integer
+      rating:
+        type: integer
+      umkm_id:
+        type: integer
+    type: object
   response.SkillResponse:
     properties:
       category_id:
@@ -215,6 +310,27 @@ definitions:
         type: integer
       name:
         type: string
+    type: object
+  response.TransactionResponse:
+    properties:
+      amount:
+        type: number
+      escrow_status:
+        type: string
+      freelancer_id:
+        type: integer
+      id:
+        type: integer
+      job_id:
+        type: integer
+      paid_at:
+        type: string
+      payment_gateway_order_id:
+        type: string
+      payment_method:
+        type: string
+      umkm_id:
+        type: integer
     type: object
   response.UmkmProfileResponse:
     properties:
@@ -573,6 +689,147 @@ paths:
       summary: Get Job Details
       tags:
       - Jobs
+  /kanban/jobs/{job_id}/tasks:
+    get:
+      description: Retrieve all kanban tasks for a specific job
+      parameters:
+      - description: Job ID
+        in: path
+        name: job_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.KanbanTaskResponse'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get Tasks by Job ID
+      tags:
+      - Kanban
+  /kanban/tasks:
+    post:
+      consumes:
+      - application/json
+      description: Add a new task to a job's workspace
+      parameters:
+      - description: Task Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateKanbanTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.KanbanTaskResponse'
+      security:
+      - BearerAuth: []
+      summary: Create Kanban Task
+      tags:
+      - Kanban
+  /kanban/tasks/{id}/status:
+    patch:
+      description: Move a task to todo, in_progress, or done
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Status Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateKanbanTaskStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update Task Status
+      tags:
+      - Kanban
+  /reviews:
+    post:
+      consumes:
+      - application/json
+      description: UMKM gives a rating and feedback to the freelancer after job completion.
+      parameters:
+      - description: Review Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateReviewRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.ReviewResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a Review
+      tags:
+      - Reviews
+  /reviews/freelancer/{freelancer_id}:
+    get:
+      parameters:
+      - description: Freelancer ID
+        in: path
+        name: freelancer_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.ReviewResponse'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get reviews by Freelancer ID
+      tags:
+      - Reviews
+  /reviews/job/{job_id}:
+    get:
+      parameters:
+      - description: Job ID
+        in: path
+        name: job_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ReviewResponse'
+      security:
+      - BearerAuth: []
+      summary: Get review by Job ID
+      tags:
+      - Reviews
   /skills:
     post:
       consumes:
@@ -626,6 +883,72 @@ paths:
       summary: Get Skills by Category
       tags:
       - Master Data
+  /transactions:
+    post:
+      consumes:
+      - application/json
+      description: UMKM makes a payment for a job, funds are held in escrow.
+      parameters:
+      - description: Transaction Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateTransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.TransactionResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a Transaction (Escrow)
+      tags:
+      - Transactions
+  /transactions/{id}/release:
+    patch:
+      description: UMKM releases the held funds when job is done.
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Release funds to Freelancer
+      tags:
+      - Transactions
+  /transactions/job/{job_id}:
+    get:
+      parameters:
+      - description: Job ID
+        in: path
+        name: job_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.TransactionResponse'
+      security:
+      - BearerAuth: []
+      summary: Get transaction by Job ID
+      tags:
+      - Transactions
   /umkm/profile:
     post:
       consumes:

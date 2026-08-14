@@ -70,7 +70,22 @@ func main() {
 	skillUsecase := usecase.NewSkillUsecase(skillRepo, 5*time.Second)
 
 	masterDataHandler := handler.NewMasterDataHandler(categoryUsecase, skillUsecase)
-	httpDelivery.RegisterRoutes(app, authHandler, umkmProfileHandler, freelancerProfileHandler, jobHandler, jobApplicationHandler, masterDataHandler)
+
+	kanbanTaskRepo := postgres.NewKanbanTaskRepository(db)
+	kanbanTaskUsecase := usecase.NewKanbanTaskUsecase(kanbanTaskRepo, 5*time.Second)
+	kanbanHandler := handler.NewKanbanTaskHandler(kanbanTaskUsecase)
+
+	trxRepo := postgres.NewTransactionRepository(db)
+	trxUsecase := usecase.NewTransactionUsecase(trxRepo, 5*time.Second)
+	trxHandler := handler.NewTransactionHandler(trxUsecase)
+
+	reviewRepo := postgres.NewReviewRepository(db)
+	reviewUsecase := usecase.NewReviewUsecase(reviewRepo, 5*time.Second)
+	reviewHandler := handler.NewReviewHandler(reviewUsecase)
+
+	auditLogRepo := postgres.NewAuditLogRepository(db)
+
+	httpDelivery.RegisterRoutes(app, authHandler, umkmProfileHandler, freelancerProfileHandler, jobHandler, jobApplicationHandler, masterDataHandler, kanbanHandler, trxHandler, reviewHandler, auditLogRepo)
 
 	log.Fatal(app.Listen(":8080"))
 }
