@@ -14,3 +14,44 @@ if(form){
     }
   });
 }
+
+// FAQ accordion — cuma ada di halaman cara-kerja.html
+const faqButtons = document.querySelectorAll('.faq-question');
+faqButtons.forEach(function(btn){
+  btn.addEventListener('click', function(){
+    const item = btn.closest('.faq-item');
+    const answer = item.querySelector('.faq-answer');
+    const isOpen = item.classList.contains('open');
+
+    // tutup item lain supaya tetap ringkas (accordion single-open)
+    document.querySelectorAll('.faq-item.open').forEach(function(openItem){
+      if(openItem !== item){
+        openItem.classList.remove('open');
+        openItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+        openItem.querySelector('.faq-answer').setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    item.classList.toggle('open', !isOpen);
+    btn.setAttribute('aria-expanded', String(!isOpen));
+    if(answer){ answer.setAttribute('aria-hidden', String(isOpen)); }
+  });
+});
+
+// Scroll-reveal untuk elemen ".reveal" — cuma ada di halaman cara-kerja.html
+const revealEls = document.querySelectorAll('.reveal');
+if(revealEls.length){
+  if('IntersectionObserver' in window){
+    const revealObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(function(el){ revealObserver.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('is-visible'); });
+  }
+}

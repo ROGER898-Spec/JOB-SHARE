@@ -36,11 +36,14 @@ func (h *JobHandler) Create(c *fiber.Ctx) error {
 	}
 
 	jobDomain := &domain.Job{
-		UmkmID:       req.UmkmID,
-		CategoryID:   &req.CategoryID,
-		Title:        req.Title,
-		Description:  req.Description,
-		BudgetAmount: req.BudgetAmount,
+		UmkmID:        req.UmkmID,
+		CategoryID:    &req.CategoryID,
+		Title:         req.Title,
+		Description:   req.Description,
+		BudgetAmount:  req.BudgetAmount,
+		Location:      &req.Location,
+		RadiusKm:      &req.RadiusKm,
+		DurationLabel: &req.DurationLabel,
 	}
 
 	job, err := h.jobUsecase.Create(c.Context(), jobDomain, req.SkillIDs)
@@ -79,4 +82,30 @@ func (h *JobHandler) GetByID(c *fiber.Ctx) error {
 		return pkgResponse.Error(c, fiber.StatusNotFound, "Job not found")
 	}
 	return pkgResponse.Success(c, fiber.StatusOK, "Job details retrieved", job)
+}
+
+// UpdateStatus godoc
+// @Summary Update Job Status
+// @Description UMKM updates a job's status (e.g. to in_progress or completed).
+// @Tags Jobs
+// @Security BearerAuth
+// @Accept json
+// @Produce json
+// @Param id path int true "Job ID"
+// @Param request body request.UpdateJobStatusRequest true "New Status"
+// @Success 200 {object} map[string]string
+// @Router /jobs/{id}/status [patch]
+func (h *JobHandler) UpdateStatus(c *fiber.Ctx) error {
+	id, _ := strconv.Atoi(c.Params("id"))
+
+	var req dtoRequest.UpdateJobStatusRequest
+	if err := c.BodyParser(&req); err != nil {
+		return pkgResponse.Error(c, fiber.StatusBadRequest, "Invalid request")
+	}
+
+	if err := h.jobUsecase.UpdateStatus(c.Context(), id, req.Status); err != nil {
+		return pkgResponse.Error(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	return pkgResponse.Success(c, fiber.StatusOK, "Job status updated", fiber.Map{"id": id, "status": req.Status})
 }

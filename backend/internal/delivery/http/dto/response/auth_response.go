@@ -10,3 +10,8 @@ type UserResponse struct {
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }
+
+type LoginResponse struct {
+	User  UserResponse `json:"user"`
+	Token string       `json:"token"`
+}

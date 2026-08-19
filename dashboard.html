@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — JOBnesia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="index.css">
+<style>
+  .dash-wrap{ padding: 56px 0 90px; }
+  .dash-head{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:32px; flex-wrap:wrap; gap:16px; }
+  .dash-head .eyebrow{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:0.78rem;
+    letter-spacing:0.06em; text-transform:uppercase; color:var(--teal); margin-bottom:10px;
+  }
+  .dash-head h1{ font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 6px; }
+  .dash-head p{ color: var(--ink-soft); }
+
+  .dash-stats{ display:grid; grid-template-columns: repeat(4, 1fr); gap:14px; margin-bottom:36px; }
+  .dash-stat-card{
+    padding:20px; border-radius:var(--radius); border:1px solid var(--line);
+    background:var(--paper-raised); text-align:center;
+  }
+  .dash-stat-card .num{ font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:1.8rem; color:var(--teal-deep); }
+  .dash-stat-card .lbl{ font-size:0.78rem; color:var(--ink-soft); margin-top:4px; }
+
+  .dash-tabs{ display:flex; gap:8px; margin-bottom:24px; border-bottom:1px solid var(--line); }
+  .dash-tab{
+    padding:10px 4px; margin-right:20px; font-size:0.9rem; font-weight:600; color:var(--ink-soft);
+    border-bottom:2px solid transparent; cursor:pointer; background:none; border-top:none; border-left:none; border-right:none;
+    font-family:'Inter',sans-serif;
+  }
+  .dash-tab.active{ color:var(--teal-deep); border-bottom-color:var(--teal); }
+
+  .riwayat-list{ display:flex; flex-direction:column; gap:14px; }
+  .riwayat-card{
+    display:flex; justify-content:space-between; align-items:center; gap:16px;
+    padding:18px 22px; border-radius:var(--radius); border:1px solid var(--line);
+    background:var(--paper-raised); flex-wrap:wrap;
+  }
+  .riwayat-main h4{ font-family:'Plus Jakarta Sans',sans-serif; font-size:0.98rem; margin-bottom:4px; }
+  .riwayat-meta{ font-size:0.8rem; color:var(--ink-soft); display:flex; gap:12px; flex-wrap:wrap; }
+  .riwayat-side{ text-align:right; }
+  .riwayat-budget{ font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--teal-deep); margin-bottom:6px; }
+
+  .badge-status{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:0.72rem; font-weight:600; margin-left:6px; }
+  .badge-menunggu{ background:rgba(242,169,59,0.18); color:#93630E; }
+  .badge-diterima{ background:rgba(14,110,92,0.12); color:var(--teal-deep); }
+  .badge-dikerjakan{ background:rgba(14,110,92,0.12); color:var(--teal-deep); }
+  .badge-selesai{ background:rgba(74,84,77,0.12); color:var(--ink-soft); }
+
+  .empty-state{
+    text-align:center; padding:60px 20px; color:var(--ink-soft);
+    border:1.5px dashed var(--line); border-radius:var(--radius);
+  }
+
+  select.status-select{
+    padding:6px 10px; border-radius:8px; border:1.5px solid var(--line);
+    background:var(--paper); font-family:'Inter',sans-serif; font-size:0.8rem;
+  }
+
+  @media (max-width:760px){
+    .dash-stats{ grid-template-columns: repeat(2, 1fr); }
+    .riwayat-card{ flex-direction:column; align-items:flex-start; }
+    .riwayat-side{ text-align:left; width:100%; }
+  }
+</style>
+</head>
+<body>
+
+<header id="site-header"></header>
+
+<main>
+  <section class="dash-wrap">
+    <div class="wrap">
+
+      <div class="dash-head">
+        <div>
+          <span class="eyebrow" id="dashEyebrow">Dashboard</span>
+          <h1 id="dashTitle">Ringkasan Aktivitas</h1>
+          <p id="dashSubtitle">Pantau kebutuhan dan status pekerjaanmu di sini.</p>
+        </div>
+        <a id="dashCta" href="posting.html" class="btn btn-primary">Posting Kebutuhan Baru</a>
+      </div>
+
+      <div class="dash-stats" id="dashStats">
+        <!-- diisi lewat JS -->
+      </div>
+
+      <div class="dash-tabs" id="dashTabs">
+        <button class="dash-tab active" data-filter="semua">Semua</button>
+        <button class="dash-tab" data-filter="menunggu">Menunggu</button>
+        <button class="dash-tab" data-filter="diterima">Diterima</button>
+        <button class="dash-tab" data-filter="dikerjakan">Dikerjakan</button>
+        <button class="dash-tab" data-filter="selesai">Selesai</button>
+      </div>
+
+      <div class="riwayat-list" id="riwayatList"></div>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        Belum ada riwayat di sini.
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="components.js"></script>
+<script src="script.js"></script>
+<script>
+  // ---------- Guard: harus login ----------
+  const currentUser = JSON.parse(localStorage.getItem('jobnesia_current_user') || 'null');
+  if(!currentUser){
+    window.location.href = 'login.html';
+  }
+
+  const isUmkm = currentUser.role === 'umkm';
+  let activeFilter = 'semua';
+
+  function formatRupiah(angka){
+    return 'Rp' + Number(angka).toLocaleString('id-ID');
+  }
+
+  function waktuRelatif(iso){
+    const diffMs = Date.now() - new Date(iso).getTime();
+    const menit = Math.floor(diffMs / 60000);
+    if(menit < 1) return 'Baru saja';
+    if(menit < 60) return menit + ' menit lalu';
+    const jam = Math.floor(menit / 60);
+    if(jam < 24) return jam + ' jam lalu';
+    return Math.floor(jam / 24) + ' hari lalu';
+  }
+
+  function badgeHtml(status){
+    const label = { menunggu:'Menunggu', diterima:'Diterima', dikerjakan:'Dikerjakan', selesai:'Selesai' }[status] || status;
+    return '<span class="badge-status badge-' + status + '">' + label + '</span>';
+  }
+
+  // ---------- Setup header sesuai role ----------
+  if(isUmkm){
+    document.getElementById('dashEyebrow').textContent = 'Dashboard UMKM';
+    document.getElementById('dashTitle').textContent = 'Riwayat Kebutuhan Kamu';
+    document.getElementById('dashSubtitle').textContent = 'Semua kebutuhan yang pernah kamu posting beserta statusnya.';
+  } else {
+    document.getElementById('dashEyebrow').textContent = 'Dashboard Freelancer';
+    document.getElementById('dashTitle').textContent = 'Riwayat Pekerjaan Kamu';
+    document.getElementById('dashSubtitle').textContent = 'Semua tawaran kerja yang pernah kamu ambil beserta statusnya.';
+    document.getElementById('dashCta').textContent = 'Cari Tawaran Kerja';
+    document.getElementById('dashCta').href = 'tawaran.html';
+  }
+
+  // ---------- Ambil data relevan sesuai role ----------
+  function getMyJobs(){
+    const allJobs = JSON.parse(localStorage.getItem('jobnesia_jobs') || '[]');
+    if(isUmkm){
+      return allJobs.filter(function(j){ return j.posterId === currentUser.email; });
+    }
+    return allJobs.filter(function(j){ return j.freelancerId === currentUser.email; });
+  }
+
+  // ---------- Render statistik ringkas ----------
+  function renderStats(jobs){
+    const total = jobs.length;
+    const menunggu = jobs.filter(function(j){ return j.status === 'menunggu'; }).length;
+    const aktif = jobs.filter(function(j){ return j.status === 'diterima' || j.status === 'dikerjakan'; }).length;
+    const selesai = jobs.filter(function(j){ return j.status === 'selesai'; }).length;
+
+    const statLabel1 = isUmkm ? 'Total Diposting' : 'Total Diambil';
+    const statLabel2 = isUmkm ? 'Menunggu Freelancer' : 'Menunggu Konfirmasi';
+
+    document.getElementById('dashStats').innerHTML =
+      '<div class="dash-stat-card"><div class="num">' + total + '</div><div class="lbl">' + statLabel1 + '</div></div>' +
+      '<div class="dash-stat-card"><div class="num">' + menunggu + '</div><div class="lbl">' + statLabel2 + '</div></div>' +
+      '<div class="dash-stat-card"><div class="num">' + aktif + '</div><div class="lbl">Sedang Berjalan</div></div>' +
+      '<div class="dash-stat-card"><div class="num">' + selesai + '</div><div class="lbl">Selesai</div></div>';
+  }
+
+  // ---------- Render daftar riwayat ----------
+  function renderRiwayat(){
+    const jobs = getMyJobs();
+    renderStats(jobs);
+
+    let filtered = jobs;
+    if(activeFilter !== 'semua'){
+      filtered = jobs.filter(function(j){ return j.status === activeFilter; });
+    }
+    filtered.sort(function(a,b){ return new Date(b.createdAt) - new Date(a.createdAt); });
+
+    const riwayatList = document.getElementById('riwayatList');
+    const emptyState = document.getElementById('emptyState');
+
+    if(filtered.length === 0){
+      riwayatList.innerHTML = '';
+      emptyState.style.display = 'block';
+      return;
+    }
+    emptyState.style.display = 'none';
+
+    riwayatList.innerHTML = filtered.map(function(job){
+      const pihakLain = isUmkm
+        ? (job.freelancerNama ? ('Freelancer: ' + job.freelancerNama) : 'Belum ada freelancer')
+        : ('UMKM: ' + job.posterNama);
+
+      // UMKM bisa update status jadi "Dikerjakan" / "Selesai" manual (belum ada tracking real-time)
+      const statusControl = (isUmkm && job.status !== 'menunggu')
+        ? '<select class="status-select" onchange="updateStatus(\'' + job.id + '\', this.value)">' +
+            '<option value="diterima"' + (job.status==='diterima'?' selected':'') + '>Diterima</option>' +
+            '<option value="dikerjakan"' + (job.status==='dikerjakan'?' selected':'') + '>Dikerjakan</option>' +
+            '<option value="selesai"' + (job.status==='selesai'?' selected':'') + '>Selesai</option>' +
+          '</select>'
+        : badgeHtml(job.status);
+
+      return (
+        '<div class="riwayat-card">' +
+          '<div class="riwayat-main">' +
+            '<h4>' + job.judul + '</h4>' +
+            '<div class="riwayat-meta">' +
+              '<span>📍 ' + job.lokasi + '</span>' +
+              '<span>' + pihakLain + '</span>' +
+              '<span>🕒 ' + waktuRelatif(job.createdAt) + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="riwayat-side">' +
+            '<div class="riwayat-budget">' + formatRupiah(job.budget) + '</div>' +
+            statusControl +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  // Dipanggil dari dropdown status (khusus UMKM)
+  function updateStatus(jobId, newStatus){
+    const allJobs = JSON.parse(localStorage.getItem('jobnesia_jobs') || '[]');
+    const idx = allJobs.findIndex(function(j){ return j.id === jobId; });
+    if(idx === -1) return;
+    allJobs[idx].status = newStatus;
+    localStorage.setItem('jobnesia_jobs', JSON.stringify(allJobs));
+    renderRiwayat();
+  }
+
+  // ---------- Tab filter ----------
+  document.querySelectorAll('.dash-tab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('.dash-tab').forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+      activeFilter = tab.getAttribute('data-filter');
+      renderRiwayat();
+    });
+  });
+
+  renderRiwayat();
+</script>
+
+</body>
+</html>

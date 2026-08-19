@@ -66,18 +66,21 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		return pkgResponse.Error(c, fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	user, err := h.authUsecase.Login(c.Context(), req.Email, req.Password)
+	user, token, err := h.authUsecase.Login(c.Context(), req.Email, req.Password)
 	if err != nil {
 		return pkgResponse.Error(c, fiber.StatusUnauthorized, err.Error())
 	}
 
-	res := response.UserResponse{
-		ID:        user.ID,
-		Email:     user.Email,
-		Role:      user.Role,
-		IsActive:  user.IsActive,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
+	res := response.LoginResponse{
+		User: response.UserResponse{
+			ID:        user.ID,
+			Email:     user.Email,
+			Role:      user.Role,
+			IsActive:  user.IsActive,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		},
+		Token: token,
 	}
 
 	return pkgResponse.Success(c, fiber.StatusOK, "Login successful", res)

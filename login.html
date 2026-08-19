@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masuk — JOBnesia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<header id="site-header"></header>
+
+<main>
+  <section class="auth-section">
+    <div class="wrap">
+      <div class="auth-card">
+        <div class="auth-head">
+          <span class="eyebrow">Masuk</span>
+          <h1>Selamat datang kembali</h1>
+          <p>Masuk untuk lanjut posting kebutuhan atau cari kerja lepas terdekat.</p>
+        </div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Kata Sandi</label>
+            <input type="password" id="password" required>
+          </div>
+
+          <div class="form-error" id="formError">Email atau kata sandi salah. Coba lagi.</div>
+
+          <button type="submit" class="btn btn-primary auth-submit">Masuk</button>
+          <div class="auth-msg" id="loginMsg"></div>
+        </form>
+
+        <div class="auth-switch">Belum punya akun? <a href="register.html">Daftar di sini</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="components.js"></script>
+<script src="script.js"></script>
+<script>
+  // Login — panggil backend beneran, simpan token + profil buat dipakai halaman lain
+  const API_BASE = 'http://localhost:8080/api/v1';
+
+  async function apiFetch(path, options){
+    options = options || {};
+    const res = await fetch(API_BASE + path, {
+      method: options.method || 'GET',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, options.headers || {}),
+      body: options.body
+    });
+    const body = await res.json().catch(function(){ return {}; });
+    if(!res.ok){
+      throw new Error(body.message || 'Terjadi kesalahan, coba lagi.');
+    }
+    return body.data;
+  }
+
+  const loginForm = document.getElementById('loginForm');
+  const formError = document.getElementById('formError');
+  const loginMsg = document.getElementById('loginMsg');
+
+  loginForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    formError.style.display = 'none';
+    loginMsg.textContent = 'Memeriksa akun...';
+    loginMsg.className = 'auth-msg';
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    try {
+      const loginData = await apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email: email, password: password })
+      });
+      const token = loginData.token;
+      const userId = loginData.user.id;
+      const role = loginData.user.role;
+
+      // Ambil profil (buat dapetin profileId & nama tampilan — dibutuhkan
+      // posting.html/tawaran.html/dashboard.html)
+      let profile, nama;
+      if(role === 'umkm'){
+        profile = await apiFetch('/umkm/profile/' + userId, { headers: { 'Authorization': 'Bearer ' + token } });
+        nama = profile.owner_name;
+      } else {
+        profile = await apiFetch('/freelancers/profile/' + userId, { headers: { 'Authorization': 'Bearer ' + token } });
+        nama = profile.full_name;
+      }
+
+      localStorage.setItem('jobnesia_token', token);
+      localStorage.setItem('jobnesia_session', JSON.stringify({
+        userId: userId,
+        role: role,
+        nama: nama,
+        profileId: profile.id
+      }));
+
+      loginMsg.textContent = 'Berhasil masuk sebagai ' + nama + '! Mengarahkan...';
+      loginMsg.className = 'auth-msg success';
+
+      setTimeout(function(){
+        window.location.href = 'dashboard.html';
+      }, 1000);
+
+    } catch(err){
+      formError.textContent = err.message;
+      formError.style.display = 'block';
+      loginMsg.textContent = '';
+    }
+  });
+</script>
+
+</body>
+</html>

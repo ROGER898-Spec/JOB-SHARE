@@ -5,9 +5,10 @@
 
 const NAV_LINKS = [
   { label: 'Beranda', href: 'index.html' },
-  { label: 'About Us', href: 'about.html' },
+  { label: 'Cara Kerja', href: 'cara-kerja.html' },
   { label: 'Jasa', href: 'jasa.html' },
-  { label: 'Kontak', href: 'kontak.html' }
+  { label: 'Kontak', href: 'kontak.html' },
+   { label: 'About Us', href: 'about.html' }
 ];
 
 function renderHeader(){
@@ -22,20 +23,19 @@ function renderHeader(){
 
   header.innerHTML =
     '<nav class="nav wrap" style="padding-left:0; padding-right:0;">' +
-      '<a href="index.html" class="logo" style="text-decoration:none;"><span class="dot"></span>JOBnesia</a>' +
+      '<a href="index.html" class="logo" style="text-decoration:none; display:flex; align-items:center; gap:8px;"><img src="Assets/gs_logo_large_1.png" alt="GigSearch" style="height:28px; width:auto;">GigSearch</a>' +
       '<ul class="nav-links">' + linksHtml + '</ul>' +
       '<div class="nav-cta">' +
-        '<a href="index.html#cta" class="btn btn-ghost btn-sm">Masuk</a>' +
-        '<a href="index.html#cta" class="btn btn-primary btn-sm"><span class="long">Gabung&nbsp;</span>Gratis</a>' +
+        '<a href="login.html" class="btn btn-ghost btn-sm">Masuk</a>' +
+        '<a href="register.html" class="btn btn-primary btn-sm"><span class="long">Gabung&nbsp;</span>Gratis</a>' +
       '</div>' +
       '<button class="menu-toggle" aria-label="Buka menu"><span></span><span></span><span></span></button>' +
     '</nav>';
 
-  // Mobile menu toggle — dipasang ulang tiap kali header di-render
-  const menuToggle = header.querySelector('.menu-toggle');
-  const navLinksEl = header.querySelector('.nav-links');
+  var menuToggle = header.querySelector('.menu-toggle');
+  var navLinksEl = header.querySelector('.nav-links');
   menuToggle.addEventListener('click', function(){
-    const isOpen = navLinksEl.style.display === 'flex';
+    var isOpen = navLinksEl.style.display === 'flex';
     navLinksEl.style.display = isOpen ? 'none' : 'flex';
     navLinksEl.style.flexDirection = 'column';
     navLinksEl.style.position = 'absolute';
@@ -55,8 +55,8 @@ function renderFooter(){
 
   footer.innerHTML =
     '<div class="wrap footer-inner">' +
-      '<a href="index.html" class="logo" style="text-decoration:none;"><span class="dot"></span>JOBnesia</a>' +
-      '<p>Dibuat untuk GEMASTIK XIX 2026 — Kompetisi Pengembangan Perangkat Lunak</p>' +
+      '<a href="index.html" class="logo" style="text-decoration:none; display:flex; align-items:center; gap:8px;"><img src="Assets/gs_logo_navbar_1.png" alt="GigSearch" style="height:24px; width:auto;">GigSearch</a>' +
+      '<p>Proyek ini dibuat untuk membantu para masyarakat yang membutuhkan tenaga kerja sementara</p>' +
     '</div>';
 }
 
