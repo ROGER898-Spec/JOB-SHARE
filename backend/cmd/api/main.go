@@ -15,19 +15,32 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	httpDelivery "github.com/FyaEdu/JOB-SHARE/backend/internal/delivery/http"
 	"github.com/FyaEdu/JOB-SHARE/backend/internal/delivery/http/handler"
 	"github.com/FyaEdu/JOB-SHARE/backend/internal/repository/postgres"
 	"github.com/FyaEdu/JOB-SHARE/backend/internal/usecase"
+	"github.com/joho/godotenv"
 
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/lib/pq"
 )
 
 func main() {
-	dsn := "postgres://root:password@localhost:5432/jobshare?sslmode=disable"
+	if os.Getenv("DATABASE_URL") == "" {
+		if err := godotenv.Load("../.env"); err != nil {
+			log.Printf("Warning: .env file not found: %v", err)
+		}
+	}
+
+	dsn := os.Getenv("DATABASE_URL")
+
+	if dsn == "" {
+		log.Fatal("DATABASE_URL environment variable is not set")
+	}
+
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
@@ -87,5 +100,10 @@ func main() {
 
 	httpDelivery.RegisterRoutes(app, authHandler, umkmProfileHandler, freelancerProfileHandler, jobHandler, jobApplicationHandler, masterDataHandler, kanbanHandler, trxHandler, reviewHandler, auditLogRepo)
 
-	log.Fatal(app.Listen(":8080"))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Fatal(app.Listen("0.0.0.0:" + port))
 }
